@@ -53,9 +53,9 @@ fi
 #xterm -geometry 80x50+494+51 &
 #xterm -geometry 80x20+494-0 &
 #exec xterm -geometry 80x66+0+0 -name login
-xset +dpms # enable auto-standby of the monitor
-xset dpms 1450 1450 0 # standby, suspend off(0 to deactivate)
-xset s 1200 180 # Send notification after 20min and lock 3 mins after notification
+xset +dpms # enable auto-standby of the monitor [redundant as setting dpms values implicitly enables dpms]
+xset dpms 1000 0 0 # standby, suspend off (0 to deactivate)
+xset s 720 180 # Send notification after 12 min and lock 3 mins after notification (in total after 15 min)
 msg_txt="Architect is going to lock in 3 mins due to inactivity"
 xss-lock -n "notify-send -u critical -t 3000 -i notification-display-brightness Autolock '$msg_txt'" i3lock-fancy &
 exec i3
