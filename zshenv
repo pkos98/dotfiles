@@ -1,5 +1,6 @@
 export EDITOR=vim
 export BROWSER=firefox
+export LANG="de_DE.UTF-8"
 alias statusctl="sudo systemctl status "
 alias startctl="sudo systemctl start "
 alias stopctl="sudo systemctl stop "
