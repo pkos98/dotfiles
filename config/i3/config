@@ -47,6 +47,7 @@ bindsym $alt+m exec mailspring
 bindsym ctrl+$alt+t exec gnome-terminal
 bindsym XF86KbdBrightnessDown exec xbacklight -dec 5 
 bindsym XF86KbdBrightnessUp exec xbacklight -inc 5
+bindsym XF86AudioMute exec amixer sset Master toggle
 bindsym XF86AudioLowerVolume exec amixer sset Master 5%-
 bindsym XF86AudioRaiseVolume exec amixer sset Master 5%+
 # ctrl + alt + del to invoke locking
