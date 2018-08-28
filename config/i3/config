@@ -36,6 +36,7 @@ bindsym $mod+Return exec i3-sensible-terminal
 # kill focused window
 #bindsym $mod+Shift+q kill
 
+###### CUSTOM KEYBINDINGS
 # start dmenu (a program launcher)
 bindsym $alt+d exec dmenu_run
 
@@ -45,14 +46,17 @@ bindsym $alt+e exec pcmanfm
 bindsym $alt+m exec mailspring
 bindsym ctrl+$alt+t exec gnome-terminal
 # set F5 & F6 as brightness control
-bindsym 0xffc2 exec xbacklight -inc 5
-bindsym 0xffc3  exec xbacklight -dec 5
+bindsym 0xffc2 exec xbacklight -dec 5
+bindsym 0xffc3  exec xbacklight -inc 5
 # set F7 & F8 as volume control
 bindsym 0xffc4 exec amixer sset Master 5%-
 bindsym 0xffc5 exec amixer sset Master 5%+
 # ctrl + alt + del to invoke locking
 bindsym ctrl+$alt+0xffff exec i3lock-fancy
 bindsym ctrl+$alt+s exec shutdown now
+
+###### END CUSTOM KEYBINDINGS
+
 focus_follows_mouse yes
 # Window rules
 for_window [class="Firefox"] move container to workspace 2
