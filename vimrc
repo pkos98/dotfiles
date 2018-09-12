@@ -1,3 +1,22 @@
+" === VUNDLE ===
+set nocompatible
+filetype off
+
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+" Integrates elixir support (autocompletion, doc-lookup, jump2def...)
+Plugin 'slashmili/alchemist.vim'
+
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on    " required
+
+
+" === NORMAL CONFIG ===
 " configure expanding of tabs for various file types
 au BufRead,BufNewFile *.py set expandtab
 au BufRead,BufNewFile *.c set noexpandtab
