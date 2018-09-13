@@ -64,6 +64,9 @@ plugins=(
   fast-syntax-highlighting
 )
 
+# Needs to be executed before sourcing
+# Allows root to use autocomplete
+export ZSH_DISABLE_COMPFIX=true
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
@@ -110,10 +113,3 @@ autoload -Uz compinit
 compinit
 # End of lines added by compinstall
 zstyle ':completion:*' menu select
-
-# Bind up and down keys for history search
-#bindkey '^[[A' history-substring-search-up
-#bindkey '^[[B' history-substring-search-down
-
-# enables syntax highlighting (installed aur-package)
-#source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
