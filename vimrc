@@ -8,8 +8,19 @@ call vundle#begin()
 
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
+" Provides autocomplete
+Plugin 'Valloric/YouCompleteMe'
+" Elixir/EEx syntax highlighting, filetype detection & indentation
+Plugin 'elixir-editors/vim-elixir'
 " Integrates elixir support (autocompletion, doc-lookup, jump2def...)
 Plugin 'slashmili/alchemist.vim'
+" Provides status bar
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
+let g:airline_theme='aurora'
+" File explorer
+Plugin 'scrooloose/nerdtree.git'
+map <C-e> :NERDTreeToggle<CR>
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -44,3 +55,8 @@ set showcmd             " show (partial) command in status line
 autocmd FileType python setlocal completeopt-=preview           " Disable auto-popup of the docstring window during completion
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 let g:vim_markdown_folding_disabled = 1 " disable header-folding
+
+" automagically open vim when no file is specified
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | edit $HOME/.vimrc | set ft=vim | endif
+
