@@ -21,6 +21,8 @@ let g:airline_theme='aurora'
 " File explorer
 Plugin 'scrooloose/nerdtree.git'
 map <C-e> :NERDTreeToggle<CR>
+" Ctrl+p to search for files
+Plugin 'ctrlpvim/ctrlp.vim'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required

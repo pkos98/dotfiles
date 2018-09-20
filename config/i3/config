@@ -44,7 +44,9 @@ bindsym $mod+w kill
 bindsym $alt+f exec firefox
 bindsym $alt+e exec pcmanfm
 bindsym $alt+m exec mailspring
+bindsym Print exec scrot -u "Screeenshot_%T.png"
 bindsym ctrl+$alt+t exec gnome-terminal
+bindsym $alt+c exec code --ignore-gpu-blacklist
 bindsym XF86KbdBrightnessDown exec xbacklight -dec 5 
 bindsym XF86KbdBrightnessUp exec xbacklight -inc 5
 bindsym XF86AudioMute exec amixer sset Master toggle
