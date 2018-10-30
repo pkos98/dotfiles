@@ -113,3 +113,5 @@ autoload -Uz compinit
 compinit
 # End of lines added by compinstall
 zstyle ':completion:*' menu select
+[ -f /opt/miniconda3/etc/profile.d/conda.sh ] && source /opt/miniconda3/etc/profile.d/conda.sh
+systemctl --user start xfce4-notifyd
