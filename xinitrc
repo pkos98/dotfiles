@@ -48,6 +48,7 @@ if [ -d /etc/X11/xinit/xinitrc.d ] ; then
  unset f
 fi
 
+export PATH="${PATH}:/home/patrick/bin"
 #twm &
 #xclock -geometry 50x50-1+1 &
 #xterm -geometry 80x50+494+51 &
@@ -57,5 +58,5 @@ xset +dpms # enable auto-standby of the monitor [redundant as setting dpms value
 xset dpms 1000 0 0 # standby, suspend off (0 to deactivate)
 xset s 720 180 # Send notification after 12 min and lock 3 mins after notification (in total after 15 min)
 msg_txt="Architect is going to lock in 3 mins due to inactivity"
-xss-lock -n "notify-send -u critical -t 3000 -i notification-display-brightness Autolock '$msg_txt'" i3lock-fancy &
+xss-lock -n "notify-send -t 3000 -i notification-display-brightness Autolock '$msg_txt'" i3lock-fancy &
 exec i3
