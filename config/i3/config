@@ -43,8 +43,9 @@ bindsym $alt+d exec dmenu_run
 bindsym $mod+w kill
 bindsym $alt+f exec firefox
 bindsym $alt+e exec pcmanfm
-bindsym $alt+m exec mailspring
-bindsym Print exec scrot -u "Screeenshot_%T.png"
+bindsym $alt+m exec thunderbird 
+bindsym Print exec scrot "/home/patrick/Screeenshot_%T.png"
+bindsym ctrl+Print exec "sleep 0.2;scrot -s /home/patrick/Screeenshot_%T.png"
 bindsym ctrl+$alt+t exec gnome-terminal
 bindsym $alt+c exec code --ignore-gpu-blacklist
 bindsym XF86KbdBrightnessDown exec xbacklight -dec 5 
@@ -61,7 +62,7 @@ bindsym ctrl+$alt+s exec shutdown now
 focus_follows_mouse yes
 # Window rules
 for_window [class="Firefox"] move container to workspace 2
-for_window [class="Mailspring"] move container to workspace 3
+for_window [class="Thunderbird"] move container to workspace 3
 
 # change focus
 bindsym $mod+h focus left
@@ -189,7 +190,7 @@ exec pkill -SIGUSR1 -f "python /home/user/.config/i3/pystatus.py"
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
-    status_command    python ~/src/bar.py
+    status_command    python3.7 ~/src/bar.py
     position          top
     workspace_buttons yes
     font pango:Hack, FontAwesome 9
