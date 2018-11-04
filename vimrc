@@ -2,8 +2,9 @@
 set nocompatible
 filetype off
 
-" set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
+" === PLUGIN CONFIG ===
+
+set rtp+=~/.vim/bundle/Vundle.vim " set the runtime path to include Vundle and initialize
 call vundle#begin()
 
 " let Vundle manage Vundle, required
@@ -32,6 +33,7 @@ Plugin 'ctrlpvim/ctrlp.vim'
 " Shows syntax errors
 Plugin 'vim-syntastic/syntastic'
 let g:syntastic_enable_elixir_checker = 1 " Will execute the files in order to look for errors...
+" Git support (also in airline)
 Plugin 'tpope/vim-fugitive'
 
 " All of your Plugins must be added before the following line
@@ -76,4 +78,10 @@ autocmd BufWritePre *.py %s/\s\+$//e "automatically remove trailing whitespaces 
 au BufRead,BufNewFile *.c set noexpandtab
 au BufRead,BufNewFile *.h set noexpandtab
 au BufRead,BufNewFile Makefile* set noexpandtab
+
+" set indention-width level to 2 & replace tab with 2 spaces for assembler
+au BufRead,BufNewFile *.s set expandtab
+au BufRead,BufNewFile *.s set tabstop=2 " set 2 spaces for google-python-styleguide
+au BufRead,BufNewFile *.s set softtabstop=2
+au BufRead,BufNewFile *.s set shiftwidth=2
 
