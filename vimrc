@@ -48,6 +48,7 @@ filetype plugin indent on    " required
 " --------------------------------------------------------------------------------
 set expandtab           " enter spaces when tab is pressed (use softtabs)
 set textwidth=80        " break lines when line length increases
+set colorcolumn=80      " marks column 80 red
 set tabstop=4           " use 4 spaces to represent tab
 set softtabstop=4
 set shiftwidth=4        " number of spaces to use for auto indent
