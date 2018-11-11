@@ -12,6 +12,9 @@ Plugin 'VundleVim/Vundle.vim'
 " Provides autocomplete
 Plugin 'Valloric/YouCompleteMe'
 let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py' " set global clang config-file
+let g:ycm_autoclose_preview_window_after_completio = 1
+map <C-d> :YcmCompleter GetDoc<CR>
+
 " Elixir/EEx syntax highlighting, filetype detection & indentation
 Plugin 'elixir-editors/vim-elixir'
 " Integrates elixir support (autocompletion, doc-lookup, jump2def...)
@@ -22,9 +25,6 @@ Plugin 'vim-airline/vim-airline-themes'
 let g:airline_theme = 'aurora'
 let g:airline#extensions#tabline#enabled = 1 " enables top-bar (buffer-bar)
 let g:airline_powerline_fonts = 1 " lets one use the powerline-fonts
-"set laststatus=2
-"let g:airline_left_sep = '' " unicode symbols
-"let g:airline_right_sep = '<'
 " File explorer
 Plugin 'scrooloose/nerdtree.git'
 map <C-e> :NERDTreeToggle<CR>
@@ -46,9 +46,9 @@ filetype plugin indent on    " required
 " --------------------------------------------------------------------------------
 " configure editor with tabs and nice stuff...
 " --------------------------------------------------------------------------------
+set cursorline          " underlines the current line
 set expandtab           " enter spaces when tab is pressed (use softtabs)
 set textwidth=80        " break lines when line length increases
-set colorcolumn=80      " marks column 80 red
 set tabstop=4           " use 4 spaces to represent tab
 set softtabstop=4
 set shiftwidth=4        " number of spaces to use for auto indent
@@ -76,13 +76,14 @@ au BufRead,BufNewFile *.py set tabstop=2 " set 2 spaces for google-python-styleg
 au BufRead,BufNewFile *.py set softtabstop=2
 au BufRead,BufNewFile *.py set shiftwidth=2
 autocmd BufWritePre *.py %s/\s\+$//e "automatically remove trailing whitespaces on :w in python-files
+
 au BufRead,BufNewFile *.c set noexpandtab
 au BufRead,BufNewFile *.h set noexpandtab
 au BufRead,BufNewFile Makefile* set noexpandtab
 
 " set indention-width level to 2 & replace tab with 2 spaces for assembler
 au BufRead,BufNewFile *.s set expandtab
-au BufRead,BufNewFile *.s set tabstop=2 " set 2 spaces for google-python-styleguide
+au BufRead,BufNewFile *.s set tabstop=2 
 au BufRead,BufNewFile *.s set softtabstop=2
 au BufRead,BufNewFile *.s set shiftwidth=2
 
