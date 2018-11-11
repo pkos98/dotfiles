@@ -1,10 +1,10 @@
-source /home/patrick/.zshenv.secret
+source /home/pkos98/.zshenv.secret
 export EDITOR=vim
 export BROWSER=firefox
 export LANG="de_DE.UTF-8"
 export ZSH_DISABLE_COMPFIX=true
 export PATH="$PATH:/opt/miniconda3/bin"
-export ANDROID_HOME="/home/patrick/android"
+export ANDROID_HOME="/home/pkos98/android"
 export PATH="$PATH:$ANDROID_HOME/android-studio/bin"
 export PATH="$PATH:$ANDROID_HOME/tools"
 export PATH="$PATH:$ANDROID_HOME/tools/bin"
