@@ -12,7 +12,7 @@ Plugin 'VundleVim/Vundle.vim'
 " Provides autocomplete
 Plugin 'Valloric/YouCompleteMe'
 let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py' " set global clang config-file
-let g:ycm_autoclose_preview_window_after_completio = 1
+let g:ycm_autoclose_preview_window_after_completion = 1
 map <C-d> :YcmCompleter GetDoc<CR>
 
 " Elixir/EEx syntax highlighting, filetype detection & indentation
@@ -33,6 +33,8 @@ Plugin 'ctrlpvim/ctrlp.vim'
 " Shows syntax errors
 Plugin 'vim-syntastic/syntastic'
 let g:syntastic_enable_elixir_checker = 1 " Will execute the files in order to look for errors...
+let g:syntastic_check_on_wq = 0 " disable syntax-check when quitting (and simult. saving) vim!
+:command Sc :SyntasticCheck
 " Git support (also in airline)
 Plugin 'tpope/vim-fugitive'
 
@@ -72,9 +74,9 @@ autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | edit $HOME/.vimrc | s
 
 " configure expanding of tabs for various file types
 au BufRead,BufNewFile *.py set expandtab
-au BufRead,BufNewFile *.py set tabstop=2 " set 2 spaces for google-python-styleguide
-au BufRead,BufNewFile *.py set softtabstop=2
-au BufRead,BufNewFile *.py set shiftwidth=2
+au BufRead,BufNewFile *.py set tabstop=4 " set 2 spaces for google-python-styleguide
+au BufRead,BufNewFile *.py set softtabstop=4
+au BufRead,BufNewFile *.py set shiftwidth=4
 autocmd BufWritePre *.py %s/\s\+$//e "automatically remove trailing whitespaces on :w in python-files
 
 au BufRead,BufNewFile *.c set noexpandtab
@@ -83,7 +85,7 @@ au BufRead,BufNewFile Makefile* set noexpandtab
 
 " set indention-width level to 2 & replace tab with 2 spaces for assembler
 au BufRead,BufNewFile *.s set expandtab
-au BufRead,BufNewFile *.s set tabstop=2 
-au BufRead,BufNewFile *.s set softtabstop=2
-au BufRead,BufNewFile *.s set shiftwidth=2
+au BufRead,BufNewFile *.s set tabstop=4
+au BufRead,BufNewFile *.s set softtabstop=4
+au BufRead,BufNewFile *.s set shiftwidth=4
 

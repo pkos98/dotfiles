@@ -44,25 +44,21 @@ bindsym $mod+w kill
 bindsym $alt+f exec firefox
 bindsym $alt+e exec pcmanfm
 bindsym $alt+m exec thunderbird 
+bindsym $alt+b exec blueman-manager
 bindsym Print exec scrot "/home/patrick/Screeenshot_%T.png"
 bindsym ctrl+Print exec "sleep 0.2;scrot -s /home/patrick/Screeenshot_%T.png"
-bindsym ctrl+$alt+t exec gnome-terminal
+bindsym ctrl+$alt+t exec terminology
 bindsym $alt+c exec code --ignore-gpu-blacklist
-bindsym XF86KbdBrightnessDown exec xbacklight -dec 5 
-bindsym XF86KbdBrightnessUp exec xbacklight -inc 5
 bindsym XF86AudioMute exec amixer sset Master toggle
-bindsym XF86AudioRaiseVolume exec $HOME/bin/volume_wrapper.py inc 5
-bindsym XF86AudioLowerVolume exec $HOME/bin/volume_wrapper.py dec 5
+bindsym XF86AudioRaiseVolume exec $HOME/bin/audiopy_client "inc 5"
+bindsym XF86AudioLowerVolume exec $HOME/bin/audiopy_client "dec 5"
+bindsym XF86MonBrightnessDown exec xbacklight -dec 5
+bindsym XF86MonBrightnessUp exec xbacklight -inc 5
 # ctrl + alt + del to invoke locking
 bindsym ctrl+$alt+0xffff exec i3lock-fancy
-bindsym ctrl+$alt+s exec shutdown now
+bindsym ctrl+Shift+$alt+s exec shutdown now
 
 ###### END CUSTOM KEYBINDINGS
-
-focus_follows_mouse yes
-# Window rules
-for_window [class="Firefox"] move container to workspace 2
-for_window [class="Thunderbird"] move container to workspace 3
 
 # change focus
 bindsym $mod+h focus left
@@ -89,10 +85,10 @@ bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
 
 # split in horizontal orientation
-bindsym $mod+s split v
+bindsym $mod+v split v
 
 # split in vertical orientation
-bindsym $mod+v split h
+bindsym $mod+s split h
 
 # enter fullscreen mode for the focused container
 bindsym $mod+f fullscreen toggle
@@ -193,7 +189,7 @@ bar {
     status_command    python3.7 ~/src/bar.py
     position          top
     workspace_buttons yes
-    font pango:Hack, FontAwesome 9
+    font pango:Hack, FontAwesome 10
     colors {
         background #253941
         statusline #e7dfd9
@@ -204,6 +200,9 @@ bar {
         urgent_workspace   #cb4b16 #dc322f #fdf6e3
     }
 }
-exec dex -ae i3 # starts all appropiate autostart applications: https://faq.i3wm.org/question/2155/how-can-i-use-autostart-desktop-files-in-i3.1.html
 for_window [class="^.*"] border pixel 1
-# shortcuts to control keyboard backlights
+focus_follows_mouse yes
+for_window [class="Thunderbird"] move container to workspace 3
+
+exec dex -ae i3 # starts all appropiate autostart applications: https://faq.i3wm.org/question/2155/how-can-i-use-autostart-desktop-files-in-i3.1.html
+exec python /home/pkos98/src/audiopy_server.py
