@@ -25,7 +25,6 @@ alias -g "kbd_backlight"="/bin/bash /usr/local/share/kbd_backlight"
 alias sysctl="sudo systemctl"
 alias vi="vim"
 alias xclip="xclip -selection clipboard"
-alias spotify="flatpak run com.spotify.Client"
 # for sway
 #export XKB_DEFAULT_LAYOUT=de
 #export _JAVA_AWT_WM_NONREPARENTING=1
