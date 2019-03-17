@@ -41,16 +41,18 @@ bindsym $mod+Return exec i3-sensible-terminal
 bindsym $alt+d exec dmenu_run
 
 bindsym $mod+w kill
-bindsym $alt+f exec firefox
+bindsym $alt+f exec "env GTK_THEME=Adwaita:light firefox"
 bindsym $alt+e exec pcmanfm
 bindsym $alt+m exec thunderbird 
-bindsym $alt+b exec blueman-manager
+bindsym $alt+b exec blueman-browse
 bindsym Print exec scrot "/home/patrick/Screeenshot_%T.png"
 bindsym ctrl+Print exec "sleep 0.2;scrot -s /home/patrick/Screeenshot_%T.png"
 bindsym ctrl+$alt+t exec terminology
 bindsym $alt+c exec code --ignore-gpu-blacklist
 bindsym XF86AudioMute exec amixer sset Master toggle
 bindsym XF86AudioRaiseVolume exec $HOME/bin/audiopy_client "inc 5"
+bindsym XF86AudioPlay exec "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.PlayPause"
+bindsym XF86AudioNext exec "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Next"
 bindsym XF86AudioLowerVolume exec $HOME/bin/audiopy_client "dec 5"
 bindsym XF86MonBrightnessDown exec xbacklight -dec 5
 bindsym XF86MonBrightnessUp exec xbacklight -inc 5
