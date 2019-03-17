@@ -17,8 +17,6 @@ map <C-d> :YcmCompleter GetDoc<CR>
 
 " Elixir/EEx syntax highlighting, filetype detection & indentation
 Plugin 'elixir-editors/vim-elixir'
-" Integrates elixir support (autocompletion, doc-lookup, jump2def...)
-Plugin 'slashmili/alchemist.vim'
 " Provides status bar
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
@@ -50,11 +48,12 @@ filetype plugin indent on    " required
 " --------------------------------------------------------------------------------
 set cursorline          " underlines the current line
 set expandtab           " enter spaces when tab is pressed (use softtabs)
-set textwidth=80        " break lines when line length increases
+"set textwidth=80        " break lines when line length increases
 set tabstop=4           " use 4 spaces to represent tab
 set softtabstop=4
 set shiftwidth=4        " number of spaces to use for auto indent
 set autoindent          " copy indent from current line when starting a new line
+set encoding=utf-8
 
 " make backspaces more powerfull
 set backspace=indent,eol,start
@@ -85,7 +84,7 @@ au BufRead,BufNewFile Makefile* set noexpandtab
 
 " set indention-width level to 2 & replace tab with 2 spaces for assembler
 au BufRead,BufNewFile *.s set expandtab
-au BufRead,BufNewFile *.s set tabstop=4
-au BufRead,BufNewFile *.s set softtabstop=4
-au BufRead,BufNewFile *.s set shiftwidth=4
+au BufRead,BufNewFile *.s set tabstop=2
+au BufRead,BufNewFile *.s set softtabstop=2
+au BufRead,BufNewFile *.s set shiftwidth=2
 
