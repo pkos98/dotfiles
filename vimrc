@@ -17,24 +17,34 @@ map <C-d> :YcmCompleter GetDoc<CR>
 
 " Elixir/EEx syntax highlighting, filetype detection & indentation
 Plugin 'elixir-editors/vim-elixir'
+
 " Provides status bar
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 let g:airline_theme = 'aurora'
 let g:airline#extensions#tabline#enabled = 1 " enables top-bar (buffer-bar)
 let g:airline_powerline_fonts = 1 " lets one use the powerline-fonts
+
 " File explorer
 Plugin 'scrooloose/nerdtree.git'
 map <C-e> :NERDTreeToggle<CR>
+
 " Ctrl+p to search for files
 Plugin 'ctrlpvim/ctrlp.vim'
+
 " Shows syntax errors
 Plugin 'vim-syntastic/syntastic'
 let g:syntastic_enable_elixir_checker = 1 " Will execute the files in order to look for errors...
 let g:syntastic_check_on_wq = 0 " disable syntax-check when quitting (and simult. saving) vim!
+let g:syntastic_java_checkers = [] " disable java checker - needed for youcompleteme java
 :command Sc :SyntasticCheck
+
 " Git support (also in airline)
 Plugin 'tpope/vim-fugitive'
+Plugin 'liuchengxu/space-vim-dark'
+
+Plugin 'JamshedVesuna/vim-markdown-preview'
+let vim_markdown_preview_browser='Mozilla Firefox'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -87,4 +97,7 @@ au BufRead,BufNewFile *.s set expandtab
 au BufRead,BufNewFile *.s set tabstop=2
 au BufRead,BufNewFile *.s set softtabstop=2
 au BufRead,BufNewFile *.s set shiftwidth=2
-
+" Use colorscheme space-vim-dark
+colors space-vim-dark
+" set termguicolors
+hi LineNr ctermbg=NONE guibg=NONE
