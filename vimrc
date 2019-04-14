@@ -91,7 +91,7 @@ au BufRead,BufNewFile *.s set tabstop=2
 au BufRead,BufNewFile *.s set softtabstop=2
 au BufRead,BufNewFile *.s set shiftwidth=2
 
-" set background=dark
+set background=light
 colorscheme space-vim-dark
 " Always show the statusline
 set laststatus=2
