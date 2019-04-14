@@ -41,13 +41,14 @@ bindsym $mod+Return exec i3-sensible-terminal
 bindsym $alt+d exec dmenu_run
 
 bindsym $mod+w kill
-bindsym $alt+f exec "env GTK_THEME=Adwaita:light firefox"
+bindsym $alt+f exec firefox
+# "env GTK_THEME=Adwaita:light firefox"
 bindsym $alt+e exec pcmanfm
-bindsym $alt+m exec thunderbird 
-bindsym $alt+b exec blueman-browse
+bindsym $alt+m exec geary
+bindsym $alt+b exec echo "connect B8:69:C2:59:3F:6A" | bluetoothctl
 bindsym Print exec scrot "/home/patrick/Screeenshot_%T.png"
 bindsym ctrl+Print exec "sleep 0.2;scrot -s /home/patrick/Screeenshot_%T.png"
-bindsym ctrl+$alt+t exec terminology
+bindsym ctrl+$alt+t exec urxvt
 bindsym $alt+c exec code --ignore-gpu-blacklist
 bindsym XF86AudioMute exec amixer sset Master toggle
 bindsym XF86AudioRaiseVolume exec $HOME/bin/audiopy_client "inc 5"
