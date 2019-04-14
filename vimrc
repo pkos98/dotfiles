@@ -1,55 +1,48 @@
-" === VUNDLE ===
-set nocompatible
-filetype off
-
 " === PLUGIN CONFIG ===
+" Specify a directory for plugins
+" - Avoid using standard Vim directory names like 'plugin'
+call plug#begin('~/.vim/plugged')
 
-set rtp+=~/.vim/bundle/Vundle.vim " set the runtime path to include Vundle and initialize
-call vundle#begin()
-
-" let Vundle manage Vundle, required
-Plugin 'VundleVim/Vundle.vim'
 " Provides autocomplete
-Plugin 'Valloric/YouCompleteMe'
+Plug 'Valloric/YouCompleteMe'
 let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py' " set global clang config-file
 let g:ycm_autoclose_preview_window_after_completion = 1
 map <C-d> :YcmCompleter GetDoc<CR>
 
-" Elixir/EEx syntax highlighting, filetype detection & indentation
-Plugin 'elixir-editors/vim-elixir'
-
-" Provides status bar
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
-let g:airline_theme = 'aurora'
-let g:airline#extensions#tabline#enabled = 1 " enables top-bar (buffer-bar)
-let g:airline_powerline_fonts = 1 " lets one use the powerline-fonts
-
-" File explorer
-Plugin 'scrooloose/nerdtree.git'
-map <C-e> :NERDTreeToggle<CR>
-
-" Ctrl+p to search for files
-Plugin 'ctrlpvim/ctrlp.vim'
-
 " Shows syntax errors
-Plugin 'vim-syntastic/syntastic'
-let g:syntastic_enable_elixir_checker = 1 " Will execute the files in order to look for errors...
+Plug 'vim-syntastic/syntastic'
 let g:syntastic_check_on_wq = 0 " disable syntax-check when quitting (and simult. saving) vim!
 let g:syntastic_java_checkers = [] " disable java checker - needed for youcompleteme java
-:command Sc :SyntasticCheck
 
 " Git support (also in airline)
-Plugin 'tpope/vim-fugitive'
-Plugin 'liuchengxu/space-vim-dark'
+Plug 'tpope/vim-fugitive'
+Plug 'liuchengxu/space-vim-dark'
 
-Plugin 'JamshedVesuna/vim-markdown-preview'
-let vim_markdown_preview_browser='Mozilla Firefox'
+Plug 'itchyny/lightline.vim'
+let g:lightline = {
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
+      \ },
+      \ 'component_function': {
+      \   'gitbranch': 'fugitive#head'
+      \ },
+      \ }
+
+" ElixirSense Language-Server for Auto-Completion
+Plug 'slashmili/alchemist.vim', { 'for': 'elixir' }
+" Syntax highlighting
+Plug 'huffman/vim-elixir', { 'for': 'elixir' }
+
+Plug 'ap/vim-readdir'
+" Disable netrw loading
+let g:loaded_netrwPlugin = 1
+
+Plug 'tweekmonster/startuptime.vim'
 
 " All of your Plugins must be added before the following line
-call vundle#end()            " required
+call plug#end()            " required
 filetype plugin indent on    " required
-
 
 " === NORMAL CONFIG ===
 
@@ -77,11 +70,11 @@ autocmd FileType python setlocal completeopt-=preview           " Disable auto-p
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 let g:vim_markdown_folding_disabled = 1 " disable header-folding
 
-" automagically open vim when no file is specified
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | edit $HOME/.vimrc | set ft=vim | endif
+" ==== LANG SPECIFIC ====
 
-" configure expanding of tabs for various file types
+" --------------------------------------------------------------------------------
+"  Configure tabwidth, replace tabs with spaces, etc...
+" --------------------------------------------------------------------------------
 au BufRead,BufNewFile *.py set expandtab
 au BufRead,BufNewFile *.py set tabstop=4 " set 2 spaces for google-python-styleguide
 au BufRead,BufNewFile *.py set softtabstop=4
@@ -97,7 +90,8 @@ au BufRead,BufNewFile *.s set expandtab
 au BufRead,BufNewFile *.s set tabstop=2
 au BufRead,BufNewFile *.s set softtabstop=2
 au BufRead,BufNewFile *.s set shiftwidth=2
-" Use colorscheme space-vim-dark
-colors space-vim-dark
-" set termguicolors
-hi LineNr ctermbg=NONE guibg=NONE
+
+" set background=dark
+colorscheme space-vim-dark
+" Always show the statusline
+set laststatus=2
