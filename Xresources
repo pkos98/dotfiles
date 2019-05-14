@@ -36,9 +36,11 @@
 *.color15: #fdf6e3
 
 *.font: xft:Iosevka:style=Regular:size=12
+rofi.font: Iosevka 12
 *.boldFont: xft:Iosevka:style=Bold:size=12
 *.italicFont: xft:Iosevka:style=Italic:size=12
 *.boldItalicFont: xft:Iosevka:style=Bold Italic:size=12
+! rofi.font: Iosevka 12
 URxvt.letterSpace: 0
 URxvt.lineSpace: 0
 URxvt.geometry: 92x24
@@ -61,8 +63,11 @@ URxvt.keysym.Control-Right: [1;5C
 URxvt.keysym.Control-Left: [1;5D
 
 URxvt.termName: xterm-256color
-URxvt.urlLauncher: /bin/firefox
+URxvt.perl-ext-common: default,matcher
+URxvt.url-launcher: /usr/bin/firefox
 URxvt.underlineURLs: true
+urxvt*matcher.button: 1
 
 URxvt.keysym.Shift-Control-V: eval:paste_clipboard
 URxvt.keysym.Shift-Control-C: eval:selection_to_clipboard
+
