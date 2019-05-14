@@ -8,6 +8,7 @@ Plug 'Valloric/YouCompleteMe'
 let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py' " set global clang config-file
 let g:ycm_autoclose_preview_window_after_completion = 1
 map <C-d> :YcmCompleter GetDoc<CR>
+let g:ycm_filetype_blacklist = { 'asciidoctor': 1, 'text': 1 }
 
 " Shows syntax errors
 Plug 'vim-syntastic/syntastic'
@@ -38,7 +39,9 @@ Plug 'ap/vim-readdir'
 " Disable netrw loading
 let g:loaded_netrwPlugin = 1
 
-Plug 'tweekmonster/startuptime.vim'
+Plug 'habamax/vim-asciidoctor', { 'for': 'asciidoc' }
+" List of filetypes to highlight, default `[]`
+let g:asciidoctor_fenced_languages = ['python', 'c', 'javascript', 'java']
 
 " All of your Plugins must be added before the following line
 call plug#end()            " required
@@ -66,7 +69,7 @@ set number              " show line number on the left side
 set mouse=a             " enable mouse support (text selection, resizing buffers)
 syntax on               " syntax highlighting
 set showcmd             " show (partial) command in status line
-autocmd FileType python setlocal completeopt-=preview           " Disable auto-popup of the docstring window during completion
+
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 let g:vim_markdown_folding_disabled = 1 " disable header-folding
 
@@ -75,6 +78,7 @@ let g:vim_markdown_folding_disabled = 1 " disable header-folding
 " --------------------------------------------------------------------------------
 "  Configure tabwidth, replace tabs with spaces, etc...
 " --------------------------------------------------------------------------------
+autocmd FileType python setlocal completeopt-=preview " Disable auto-popup of the docstring window during completion
 au BufRead,BufNewFile *.py set expandtab
 au BufRead,BufNewFile *.py set tabstop=4 " set 2 spaces for google-python-styleguide
 au BufRead,BufNewFile *.py set softtabstop=4
@@ -91,7 +95,14 @@ au BufRead,BufNewFile *.s set tabstop=2
 au BufRead,BufNewFile *.s set softtabstop=2
 au BufRead,BufNewFile *.s set shiftwidth=2
 
-set background=light
+" set indention-width level to 2 & replace tab with 2 spaces for elixir
+au BufRead,BufNewFile *.ex set expandtab
+au BufRead,BufNewFile *.ex set tabstop=2
+au BufRead,BufNewFile *.ex set softtabstop=2
+au BufRead,BufNewFile *.ex set shiftwidth=2
+
+
 colorscheme space-vim-dark
+set background=light
 " Always show the statusline
 set laststatus=2
