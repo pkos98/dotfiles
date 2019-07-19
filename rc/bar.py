@@ -30,10 +30,16 @@ status.register("battery",
                     "FULL": " ",
                 },)
 
+status.register("network",
+    interface="enp0s20f0u1",
+    format_down="",
+    format_up=" {v4cidr}",)
+
 # Note: requires both netifaces and basiciw (for essid and quality)
 status.register("network",
                 interface="wlp2s0",
-                format_up=" {v4}@{essid}",)
+                format_down="",
+                format_up=" {v4}@{essid}")
 
 # Shows disk usage of /
 # Format:
