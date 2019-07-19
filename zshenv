@@ -1,9 +1,8 @@
-source /home/pkos98/.zshenv.secret
+source ~/.zshenv.secret
 export EDITOR=vim
 export BROWSER=firefox
-export LANG="de_DE.UTF-8"
 export ZSH_DISABLE_COMPFIX=true
-export PATH="$PATH:/opt/miniconda3/bin"
+export DOTNET_ROOT="/opt/dotnet"
 export ANDROID_HOME="/home/pkos98/android"
 export PATH="$PATH:$ANDROID_HOME/android-studio/bin"
 export PATH="$PATH:$ANDROID_HOME/tools"
@@ -25,6 +24,7 @@ alias -g "kbd_backlight"="/bin/bash /usr/local/share/kbd_backlight"
 alias sysctl="sudo systemctl"
 alias vi="vim"
 alias xclip="xclip -selection clipboard"
+alias find="fd"
 # for sway
 #export XKB_DEFAULT_LAYOUT=de
 #export _JAVA_AWT_WM_NONREPARENTING=1
