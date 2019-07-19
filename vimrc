@@ -7,13 +7,13 @@ call plug#begin('~/.vim/plugged')
 Plug 'Valloric/YouCompleteMe'
 let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py' " set global clang config-file
 let g:ycm_autoclose_preview_window_after_completion = 1
-map <C-d> :YcmCompleter GetDoc<CR>
 let g:ycm_filetype_blacklist = { 'asciidoctor': 1, 'text': 1 }
 
-" Shows syntax errors
+" Shows static (syntax) errors
 Plug 'vim-syntastic/syntastic'
 let g:syntastic_check_on_wq = 0 " disable syntax-check when quitting (and simult. saving) vim!
 let g:syntastic_java_checkers = [] " disable java checker - needed for youcompleteme java
+let g:syntastic_go_checkers = ['govet', 'errcheck', 'go']
 
 " Git support (also in airline)
 Plug 'tpope/vim-fugitive'
@@ -43,12 +43,15 @@ Plug 'habamax/vim-asciidoctor', { 'for': 'asciidoc' }
 " List of filetypes to highlight, default `[]`
 let g:asciidoctor_fenced_languages = ['python', 'c', 'javascript', 'java']
 
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries', 'for': 'go' }
+" golang keybindings are in ~/.vim/ftplugin/go_mappings.vim
+
 " All of your Plugins must be added before the following line
 call plug#end()            " required
 filetype plugin indent on    " required
 
-" === NORMAL CONFIG ===
 
+" === EDITOR CONFIG ===
 " --------------------------------------------------------------------------------
 " configure editor with tabs and nice stuff...
 " --------------------------------------------------------------------------------
@@ -60,49 +63,63 @@ set softtabstop=4
 set shiftwidth=4        " number of spaces to use for auto indent
 set autoindent          " copy indent from current line when starting a new line
 set encoding=utf-8
-
-" make backspaces more powerfull
-set backspace=indent,eol,start
-
 set ruler               " show line and column number
 set number              " show line number on the left side
 set mouse=a             " enable mouse support (text selection, resizing buffers)
 syntax on               " syntax highlighting
 set showcmd             " show (partial) command in status line
+set hlsearch            " highlight matched search patterns
+set incsearch           " enable live search
+" allow backspace to delete indentation and inserted text
+set backspace=indent,eol,start
+" indent  allow backspacing over autoindent
+" eol     allow backspacing over line breaks (join lines)
+" start   allow backspacing over the start of insert; CTRL-W and CTRL-U stop once at the start of insert.
 
+" --------------------------------------------------------------------------------
+" set language independent keybindings
+" --------------------------------------------------------------------------------
+map <C-d> :YcmCompleter GetDoc <Enter>
+nnoremap <silent> <Space> :nohlsearch<Bar>:echo<CR>     " <space> clears search highlighting
+
+" ==== LANG SPECIFIC SETTINGS ====
+" markdown
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 let g:vim_markdown_folding_disabled = 1 " disable header-folding
 
-" ==== LANG SPECIFIC ====
-
-" --------------------------------------------------------------------------------
-"  Configure tabwidth, replace tabs with spaces, etc...
-" --------------------------------------------------------------------------------
+" python
 autocmd FileType python setlocal completeopt-=preview " Disable auto-popup of the docstring window during completion
 au BufRead,BufNewFile *.py set expandtab
-au BufRead,BufNewFile *.py set tabstop=4 " set 2 spaces for google-python-styleguide
+au BufRead,BufNewFile *.py set tabstop=4        " set 2 spaces for google-python-styleguide
 au BufRead,BufNewFile *.py set softtabstop=4
 au BufRead,BufNewFile *.py set shiftwidth=4
-autocmd BufWritePre *.py %s/\s\+$//e "automatically remove trailing whitespaces on :w in python-files
+autocmd BufWritePre *.py %s/\s\+$//e            " automatically remove trailing whitespaces on :w in python-files
 
+" c
 au BufRead,BufNewFile *.c set noexpandtab
 au BufRead,BufNewFile *.h set noexpandtab
 au BufRead,BufNewFile Makefile* set noexpandtab
 
-" set indention-width level to 2 & replace tab with 2 spaces for assembler
+" asm: set indention-width level to 2 & replace tab with 2 spaces
 au BufRead,BufNewFile *.s set expandtab
 au BufRead,BufNewFile *.s set tabstop=2
 au BufRead,BufNewFile *.s set softtabstop=2
 au BufRead,BufNewFile *.s set shiftwidth=2
 
-" set indention-width level to 2 & replace tab with 2 spaces for elixir
+" elixir: set indention-width level to 2 & replace tab with 2 spaces
 au BufRead,BufNewFile *.ex set expandtab
 au BufRead,BufNewFile *.ex set tabstop=2
 au BufRead,BufNewFile *.ex set softtabstop=2
 au BufRead,BufNewFile *.ex set shiftwidth=2
 
+" bash
+au BufRead,BufNewFile *.ex set expandtab
+au BufRead,BufNewFile *.ex set tabstop=4
+au BufRead,BufNewFile *.ex set softtabstop=4
+au BufRead,BufNewFile *.ex set shiftwidth=4
 
+" ==== UI STUFF ====
 colorscheme space-vim-dark
 set background=light
-" Always show the statusline
-set laststatus=2
+set laststatus=2                                        " always show the statusline
+hi Search cterm=NONE ctermfg=grey ctermbg=LightMagenta  " colour search hits 
