@@ -35,7 +35,8 @@
 *.color7: #bfbaac
 *.color15: #fdf6e3
 
-*.font: xft:Iosevka:style=Regular:size=12
+*.font: xft:Iosevka:style=Regular:size=12,xft:Iosevka Nerd Font:size=12
+! *.font: xft:Iosevka:style=Regular:size=12,xft:Iosevka Nerd Font Mono:size=12
 rofi.font: Iosevka 12
 *.boldFont: xft:Iosevka:style=Bold:size=12
 *.italicFont: xft:Iosevka:style=Italic:size=12
