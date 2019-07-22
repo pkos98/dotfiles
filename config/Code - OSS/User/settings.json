@@ -1,0 +1,12 @@
+{
+    /* ==== General VsCode settings ==== */
+    "workbench.activityBar.visible": false,
+
+    /* ==== Latex-Workshop related settings ==== */
+    "latex-workshop.view.pdf.viewer": "tab",
+
+    /* ==== Vim related settings ==== */
+    "vim.useCtrlKeys": false,           // dont override VsCode ctrl-shortcuts (like ctrl+c/v/a)
+
+
+}
