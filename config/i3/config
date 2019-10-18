@@ -44,7 +44,7 @@ bindsym $mod+w kill
 bindsym $alt+f exec firefox
 bindsym $alt+e exec pcmanfm
 bindsym $alt+m exec evolution
-bindsym $alt+b exec echo "connect B8:69:C2:59:3F:6A" | bluetoothctl
+bindsym $alt+b exec echo "connect 4C:87:5D:53:7E:90" | bluetoothctl
 bindsym Print exec "flameshot gui"            
 bindsym ctrl+Print exec "flameshot screen -r" # capture current selected window
 bindsym ctrl+$alt+t exec urxvtc
@@ -215,3 +215,4 @@ for_window [class="Thunderbird"] move container to workspace 3
 
 exec dex -ae i3 # starts all appropiate autostart applications: https://faq.i3wm.org/question/2155/how-can-i-use-autostart-desktop-files-in-i3.1.html
 exec python /home/pkos98/src/audiopy_server.py
+exec compton --config /home/pkos98/.config/compton.conf -b
