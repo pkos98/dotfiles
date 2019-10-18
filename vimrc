@@ -7,7 +7,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'Valloric/YouCompleteMe'
 let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py' " set global clang config-file
 let g:ycm_autoclose_preview_window_after_completion = 1
-let g:ycm_filetype_blacklist = { 'asciidoctor': 1, 'text': 1 }
+let g:ycm_filetype_blacklist = { 'asciidoctor': 1, 'text': 1, 'markdown': 1 }
 
 " Shows static (syntax) errors
 Plug 'vim-syntastic/syntastic'
@@ -46,6 +46,8 @@ let g:asciidoctor_fenced_languages = ['python', 'c', 'javascript', 'java']
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries', 'for': 'go' }
 " golang keybindings are in ~/.vim/ftplugin/go_mappings.vim
 
+Plug 'udalov/kotlin-vim'
+
 " All of your Plugins must be added before the following line
 call plug#end()            " required
 filetype plugin indent on    " required
@@ -55,6 +57,7 @@ filetype plugin indent on    " required
 " --------------------------------------------------------------------------------
 " configure editor with tabs and nice stuff...
 " --------------------------------------------------------------------------------
+syntax on               " syntax highlighting
 set cursorline          " underlines the current line
 set expandtab           " enter spaces when tab is pressed (use softtabs)
 "set textwidth=80        " break lines when line length increases
@@ -66,7 +69,6 @@ set encoding=utf-8
 set ruler               " show line and column number
 set number              " show line number on the left side
 set mouse=a             " enable mouse support (text selection, resizing buffers)
-syntax on               " syntax highlighting
 set showcmd             " show (partial) command in status line
 set hlsearch            " highlight matched search patterns
 set incsearch           " enable live search
