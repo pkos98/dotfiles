@@ -12,6 +12,9 @@ export PATH="$PATH:$ANDROID_HOME/tools/bin"
 export PATH="$PATH:$ANDROID_HOME/platform-tools"
 export PATH="$PATH:$HOME/bin"
 export QT_QPA_PLATFORMTHEME="gtk2"
+export DOTNET_CLI_TELEMETRY_OPTOUT=1 # disable .net core telemetry
+export DOTNET_ROOT=/opt/dotnet
+export MSBuildSDKsPath="/opt/dotnet/sdk/2.2.108/Sdks/"
 #"qt5ct"
 alias statusctl="sudo systemctl status "
 alias startctl="sudo systemctl start "
