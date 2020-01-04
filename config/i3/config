@@ -45,15 +45,17 @@ bindsym $alt+f exec firefox
 bindsym $alt+e exec pcmanfm
 bindsym $alt+m exec evolution
 bindsym $alt+b exec echo "connect 4C:87:5D:53:7E:90" | bluetoothctl
+bindsym $alt+ctrl+b exec echo "connect B8:69:C2:59:3F:6A" | bluetoothctl
+bindsym $alt+n exec nextcloud --background
 bindsym Print exec "flameshot gui"            
 bindsym ctrl+Print exec "flameshot screen -r" # capture current selected window
 bindsym ctrl+$alt+t exec urxvtc
 bindsym $alt+c exec code --ignore-gpu-blacklist
 bindsym XF86AudioMute exec amixer sset Master toggle
-bindsym XF86AudioRaiseVolume exec $HOME/bin/audiopy_client "inc 5"
+bindsym XF86AudioRaiseVolume exec echo "inc 5" | nc -w 1 -uU /tmp/audiopy.socket 
+bindsym XF86AudioLowerVolume exec echo "dec 5" | nc -w 1 -uU /tmp/audiopy.socket 
 bindsym XF86AudioPlay exec "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.PlayPause"
 bindsym XF86AudioNext exec "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Next"
-bindsym XF86AudioLowerVolume exec $HOME/bin/audiopy_client "dec 5"
 bindsym XF86MonBrightnessDown exec xbacklight -dec 5
 bindsym XF86MonBrightnessUp exec xbacklight -inc 5
 # ctrl + alt + del to invoke locking
@@ -194,7 +196,7 @@ exec pkill -SIGUSR1 -f "python /home/user/.config/i3/pystatus.py"
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
-    status_command    python3.7 ~/src/bar.py
+    status_command    python3 ~/src/bar.py
     position          top
     workspace_buttons yes
     font pango:Hack, FontAwesome 10
