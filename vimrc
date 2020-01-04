@@ -46,7 +46,7 @@ let g:asciidoctor_fenced_languages = ['python', 'c', 'javascript', 'java']
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries', 'for': 'go' }
 " golang keybindings are in ~/.vim/ftplugin/go_mappings.vim
 
-Plug 'udalov/kotlin-vim'
+Plug 'wlangstroth/vim-racket'
 
 " All of your Plugins must be added before the following line
 call plug#end()            " required
@@ -62,7 +62,6 @@ set cursorline          " underlines the current line
 set expandtab           " enter spaces when tab is pressed (use softtabs)
 "set textwidth=80        " break lines when line length increases
 set tabstop=4           " use 4 spaces to represent tab
-set softtabstop=4
 set shiftwidth=4        " number of spaces to use for auto indent
 set autoindent          " copy indent from current line when starting a new line
 set encoding=utf-8
