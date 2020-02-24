@@ -12,9 +12,10 @@ export PATH="$PATH:$ANDROID_HOME/tools/bin"
 export PATH="$PATH:$ANDROID_HOME/platform-tools"
 export PATH="$PATH:$HOME/bin"
 export QT_QPA_PLATFORMTHEME="gtk2"
+export AWT_TOOLKIT=MToolkit # for better java guis, see here:https://wiki.archlinux.org/index.php/Java#IntelliJ_IDEA
 export DOTNET_CLI_TELEMETRY_OPTOUT=1 # disable .net core telemetry
-export DOTNET_ROOT=/opt/dotnet
-export MSBuildSDKsPath="/opt/dotnet/sdk/2.2.108/Sdks/"
+export DOTNET_ROOT=/usr/share/dotnet
+export MSBuildSDKsPath="/usr/share/dotnet/sdk/3.1.100/Sdks"
 #"qt5ct"
 alias statusctl="sudo systemctl status "
 alias startctl="sudo systemctl start "
@@ -27,9 +28,11 @@ alias xop="xdg-open"
 alias sshnas="ssh root@192.168.0.101"
 alias -g "kbd_backlight"="/bin/bash /usr/local/share/kbd_backlight"
 alias sysctl="sudo systemctl"
-alias vi="vim"
+alias vim="nvim"
+alias vi="nvim"
 alias xclip="xclip -selection clipboard"
 alias find="fd"
+alias mnthdd="sudo mount openwrt_router:/ /mnt/hdd"
 # for sway
 #export XKB_DEFAULT_LAYOUT=de
 #export _JAVA_AWT_WM_NONREPARENTING=1
