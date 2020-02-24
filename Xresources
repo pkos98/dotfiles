@@ -35,14 +35,15 @@
 *.color7: #bfbaac
 *.color15: #fdf6e3
 
-*.font: xft:Iosevka:style=Regular:size=12,xft:Iosevka Nerd Font:size=12
-! *.font: xft:Iosevka:style=Regular:size=12,xft:Iosevka Nerd Font Mono:size=12
+
 rofi.font: Iosevka 12
-*.boldFont: xft:Iosevka:style=Bold:size=12
-*.italicFont: xft:Iosevka:style=Italic:size=12
-*.boldItalicFont: xft:Iosevka:style=Bold Italic:size=12
-! rofi.font: Iosevka 12
-URxvt.letterSpace: 0
+rofi.boldFont: xft:Iosevka:style=Bold:size=12
+rofi.italicFont: xft:Iosevka:style=Italic:size=12
+rofi.boldItalicFont: xft:Iosevka:style=Bold Italic:size=12
+
+URxvt.font: xft:Iosevka:style=Regular:size=12,xft:Iosevka Nerd Font:size=12
+!using letterSpace of -1 (and not 0) because urxvtf-patched-fa is used, else the fonts width is weird
+URxvt.letterSpace: -1
 URxvt.lineSpace: 0
 URxvt.geometry: 92x24
 URxvt.cursorBlink: true
