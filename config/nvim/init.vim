@@ -1,22 +1,16 @@
+" ===== general settings ====
 set incsearch
 set mouse=a
 set number
 set expandtab " use softtabs (replace tab with spaces)
 set tabstop=4 " use 4 spaces per default
-nnoremap > gt
-nnoremap < gT
 
-" Specify a directory for plugins
-call plug#begin(stdpath('data') . 'plugged')
+" ==== plugins with their settings ====
+call plug#begin('/home/pkos98/.local/share/nvimplugged')
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 Plug 'elixir-editors/vim-elixir'
-
-"Plug 'dense-analysis/ale'
-"let g:ale_sign_error = '>>'
-"let g:ale_sign_warning = '--'
-" let g:ale_set_highlights = 0
 
 Plug 'itchyny/vim-gitbranch'
 
@@ -34,3 +28,9 @@ let g:lightline = {
 
 " Initialize plugin system
 call plug#end() " calls syntax on & filetype autoindent on automatically
+
+" ==== keybindings ====
+
+" switch to right tab using '>' key
+nnoremap > gt
+nnoremap < gT
