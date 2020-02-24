@@ -55,9 +55,11 @@ export PATH="${PATH}:/home/patrick/bin"
 #xterm -geometry 80x20+494-0 &
 #exec xterm -geometry 80x66+0+0 -name login
 xset +dpms # enable auto-standby of the monitor [redundant as setting dpms values implicitly enables dpms]
-xset dpms 700 0 800 # standby, suspend, off. NOTE: standy=suspend on this monitor
+xset 0 240 # lock screen after 240 seconds. NOTE: standby=suspend on this monitor
 msg_txt="Architect is going to lock due to inactivity"
 xss-lock -n "notify-send -t 3000 -i notification-display-brightness Autolock '$msg_txt'" i3lock-fancy &
 urxvtd -q -o -f
+wmname compiz # must be executed before i3
+xflux -l 51
 exec i3
 exec nm-applet
