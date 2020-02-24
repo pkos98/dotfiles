@@ -44,8 +44,8 @@ bindsym $mod+w kill
 bindsym $alt+f exec firefox
 bindsym $alt+e exec pcmanfm
 bindsym $alt+m exec evolution
-bindsym $alt+b exec echo "connect 4C:87:5D:53:7E:90" | bluetoothctl
-bindsym $alt+ctrl+b exec echo "connect B8:69:C2:59:3F:6A" | bluetoothctl
+bindsym $alt+b exec (echo "connect 4C:87:5D:53:7E:90" | bluetoothctl) && notify-send -i /usr/share/icons/Arc/devices/64/audio-headphones.png -t 4000 "Connecting to Ebenholz"
+bindsym $alt+ctrl+b exec (echo "connect B8:69:C2:59:3F:6A" | bluetoothctl) && notify-send -i /usr/share/icons/Arc/devices/64/audio-headphones.png -t 4000 "Connecting to JBL Everest 300"
 bindsym $alt+n exec nextcloud --background
 bindsym Print exec "flameshot gui"            
 bindsym ctrl+Print exec "flameshot screen -r" # capture current selected window
