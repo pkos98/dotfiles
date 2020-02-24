@@ -9,6 +9,9 @@ set tabstop=4 " use 4 spaces per default
 call plug#begin('/home/pkos98/.local/share/nvimplugged')
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" navigate through completion suggestions with <Tab>
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
 Plug 'elixir-editors/vim-elixir'
 
@@ -25,6 +28,7 @@ let g:lightline = {
       \   'gitbranch': 'gitbranch#name'
       \ },
       \ }
+
 
 " Initialize plugin system
 call plug#end() " calls syntax on & filetype autoindent on automatically
