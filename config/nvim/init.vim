@@ -29,6 +29,10 @@ let g:lightline = {
       \ },
       \ }
 
+Plug 'lambdalisue/fern.vim'
+let g:fern#renderer = "devicons"
+Plug 'ryanoasis/vim-devicons'
+Plug 'lambdalisue/fern-renderer-devicons.vim'
 
 " Initialize plugin system
 call plug#end() " calls syntax on & filetype autoindent on automatically
@@ -38,3 +42,4 @@ call plug#end() " calls syntax on & filetype autoindent on automatically
 " switch to right tab using '>' key
 nnoremap > gt
 nnoremap < gT
+map <C-e> :Fern . -reveal=% -drawer -toggle<CR>
