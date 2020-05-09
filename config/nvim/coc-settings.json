@@ -1,5 +1,6 @@
 {
   "diagnostic.errorSign": "✘",
   "diagnostic.warningSign": ">>",
-  "diagnostic.infoSign": "ℹ"
+  "diagnostic.infoSign": "ℹ",
+   "python.jediEnabled": true
 }

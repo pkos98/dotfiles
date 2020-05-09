@@ -1,9 +1,11 @@
-" ===== general settings ====
+"===== general settings ====
 set incsearch
 set mouse=a
 set number
 set expandtab " use softtabs (replace tab with spaces)
 set tabstop=4 " use 4 spaces per default
+set guicursor=
+colorscheme gruvbox
 
 " ==== plugins with their settings ====
 call plug#begin('/home/pkos98/.local/share/nvimplugged')
@@ -14,6 +16,8 @@ inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
 Plug 'elixir-editors/vim-elixir'
+
+Plug 'PProvost/vim-ps1'
 
 Plug 'itchyny/vim-gitbranch'
 
@@ -43,3 +47,4 @@ call plug#end() " calls syntax on & filetype autoindent on automatically
 nnoremap > gt
 nnoremap < gT
 map <C-e> :Fern . -reveal=% -drawer -toggle<CR>
+autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
