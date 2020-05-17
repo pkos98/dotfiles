@@ -82,11 +82,15 @@ compinit
 # End of lines added by compinstall
 zstyle ':completion:*' menu select
 # [ -f /opt/miniconda3/etc/profile.d/conda.sh ] && source /opt/miniconda3/etc/profile.d/conda.sh
-systemctl --user start xfce4-notifyd
+#systemctl --user start xfce4-notifyd
 
-dl ()
-{ # This is about as simple as functions get.
-  pv $1 > "/mnt/hdd/Media/${1}" --progress
+dl()
+{ 
+        curl -o "$1" "https://pkos98.dev/storage/$1"
+}
+
+upload () {
+    curl -F "data=@${1}" https://pkos98.dev/storage
 }
 
 transfer() { if [ $# -eq 0 ]; then echo -e "No arguments specified. Usage:\necho transfer /tmp/test.md\ncat /tmp/test.md | transfer test.md"; return 1; fi
