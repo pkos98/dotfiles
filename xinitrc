@@ -49,11 +49,6 @@ if [ -d /etc/X11/xinit/xinitrc.d ] ; then
 fi
 
 export PATH="${PATH}:/home/patrick/bin"
-#twm &
-#xclock -geometry 50x50-1+1 &
-#xterm -geometry 80x50+494+51 &
-#xterm -geometry 80x20+494-0 &
-#exec xterm -geometry 80x66+0+0 -name login
 xset +dpms # enable auto-standby of the monitor [redundant as setting dpms values implicitly enables dpms]
 xset 0 240 # lock screen after 240 seconds. NOTE: standby=suspend on this monitor
 msg_txt="Architect is going to lock due to inactivity"
