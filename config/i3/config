@@ -14,7 +14,7 @@ set $alt Mod1
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
-font pango:monospace 8
+#font pango:monospace 8
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
@@ -49,8 +49,9 @@ bindsym $alt+ctrl+b exec (echo "connect B8:69:C2:59:3F:6A" | bluetoothctl) && no
 bindsym $alt+n exec nextcloud --background
 bindsym Print exec "flameshot gui"            
 bindsym ctrl+Print exec "flameshot screen -r" # capture current selected window
-bindsym ctrl+$alt+t exec urxvtc
+bindsym ctrl+$alt+t exec WINIT_X11_SCALE_FACTOR=1 alacritty
 bindsym $alt+c exec code --ignore-gpu-blacklist
+bindsym XF86Mail exec evolution
 bindsym XF86AudioMute exec amixer sset Master toggle
 bindsym XF86AudioRaiseVolume exec echo "inc 5" | nc -w 1 -uU /tmp/audiopy.socket 
 bindsym XF86AudioLowerVolume exec echo "dec 5" | nc -w 1 -uU /tmp/audiopy.socket 
@@ -89,9 +90,9 @@ bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
 
 # split in vertical orientation
-bindsym $mod+v split v
+bindsym $mod+v split horizontal
 # split in horizontal orientation
-bindsym $mod+s split h
+bindsym $mod+s split vertical
 # enter fullscreen mode for the focused container
 bindsym $mod+f fullscreen toggle
 bindsym $mod+t layout tabbed
@@ -199,7 +200,8 @@ bar {
     status_command    python3 ~/src/bar.py
     position          top
     workspace_buttons yes
-    font pango:Hack, FontAwesome 10
+    #font pango:Hack, FontAwesome 10
+    font              pango:Iosevka 11
     colors {
         background #253941
         statusline #e7dfd9
@@ -210,11 +212,11 @@ bar {
         urgent_workspace   #cb4b16 #dc322f #fdf6e3
     }
 }
-for_window [class="^.*"] border pixel 1
+for_window [class="^.*"] border pixel 2
 focus_follows_mouse yes
 force_focus_wrapping yes
-for_window [class="Thunderbird"] move container to workspace 3
 
 exec dex -ae i3 # starts all appropiate autostart applications: https://faq.i3wm.org/question/2155/how-can-i-use-autostart-desktop-files-in-i3.1.html
 exec python /home/pkos98/src/audiopy_server.py
 exec compton --config /home/pkos98/.config/compton.conf -b
+exec twmnd &
