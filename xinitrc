@@ -55,6 +55,5 @@ msg_txt="Architect is going to lock due to inactivity"
 xss-lock -n "notify-send -t 3000 -i notification-display-brightness Autolock '$msg_txt'" i3lock-fancy &
 urxvtd -q -o -f
 wmname compiz # must be executed before i3
-xflux -l 51
 exec i3
 exec nm-applet
