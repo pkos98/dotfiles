@@ -37,7 +37,23 @@ let g:lightline = {
       \ }
 
 Plug 'ryanoasis/vim-devicons'
+
 Plug 'lambdalisue/fern.vim'
+function! s:init_fern() abort
+    nmap <buffer><expr>
+      \ <Plug>(fern-my-expand-or-collapse)
+      \ fern#smart#leaf(
+      \   "\<Plug>(fern-action-collapse)",
+      \   "\<Plug>(fern-action-expand)",
+      \   "\<Plug>(fern-action-collapse)",
+      \ )
+
+  nmap <buffer><nowait> l <Plug>(fern-my-expand-or-collapse)
+endfunction
+augroup fern-custom
+  autocmd! *
+  autocmd FileType fern call s:init_fern()
+augroup END
 let g:fern#renderer = "devicons"
 Plug 'lambdalisue/fern-renderer-devicons.vim'
 
@@ -57,11 +73,18 @@ nnoremap <A-F2> 2gt
 nnoremap <A-F3> 3gt
 nnoremap <A-F4> 4gt
 nnoremap <A-F5> 5gt
-nnoremap <A-F6> 6gt
-nnoremap <A-F7> 7gt
-nnoremap <A-F8> 8gt
-nnoremap <A-F9> 9gt
-nnoremap <A-F0> 10gt
+
+" Use Ctrl+q to show documentation in preview window
+nnoremap <C-q> :call <SID>show_documentation()<CR>
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
 
 autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 autocmd FileType sh setlocal ts=4 sts=4 sw=4 expandtab
+autocmd FileType vim setlocal ts=4 sts=4 sw=4 expandtab
+autocmd FileType rust setlocal ts=4 sts=4 sw=4 expandtab
