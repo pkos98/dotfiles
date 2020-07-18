@@ -2,5 +2,6 @@
   "diagnostic.errorSign": "✘",
   "diagnostic.warningSign": ">>",
   "diagnostic.infoSign": "ℹ",
-   "python.jediEnabled": true
-}
+   "python.jediEnabled": true,
+   "python.pipenvPath": "/usr/bin/python3"
+  }

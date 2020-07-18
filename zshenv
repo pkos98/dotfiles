@@ -1,6 +1,6 @@
 source ~/.zshenv.secret
 export EDITOR=nvim
-#export BROWSER=firefox
+export BROWSER=firefox
 export ZSH_DISABLE_COMPFIX=true
 export DOTNET_ROOT="/opt/dotnet"
 export HEADSET="4C:87:5D:53:7E:90"

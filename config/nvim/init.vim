@@ -48,7 +48,7 @@ function! s:init_fern() abort
       \   "\<Plug>(fern-action-collapse)",
       \ )
 
-  nmap <buffer><nowait> l <Plug>(fern-my-expand-or-collapse)
+nmap <buffer><nowait> l <Plug>(fern-my-expand-or-collapse)
 endfunction
 augroup fern-custom
   autocmd! *
@@ -56,6 +56,12 @@ augroup fern-custom
 augroup END
 let g:fern#renderer = "devicons"
 Plug 'lambdalisue/fern-renderer-devicons.vim'
+
+
+Plug 'junegunn/fzf'
+" let mapleader = " "
+nnoremap <C-p> :FZF<CR>
+
 
 " Initialize plugin system
 call plug#end() " calls syntax on & filetype autoindent on automatically
