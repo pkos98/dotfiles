@@ -87,7 +87,7 @@ dl()
         curl -o "$1" "https://pkos98.dev/storage/$1"
 }
 
-upload () {
+ul() {
     curl -F "data=@${1}" https://pkos98.dev/storage
 }
 
