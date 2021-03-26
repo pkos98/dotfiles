@@ -16,9 +16,10 @@ export QT_QPA_PLATFORMTHEME="gtk2"
 #export AWT_TOOLKIT=MToolkit # for better java guis, see here:https://wiki.archlinux.org/index.php/Java#IntelliJ_IDEA
 export DOTNET_CLI_TELEMETRY_OPTOUT=1 # disable .net core telemetry
 export DOTNET_ROOT=/usr/share/dotnet
-export MSBuildSDKsPath="/usr/share/dotnet/sdk/3.1.100/Sdks"
+export MSBuildSDKsPath="/usr/share/dotnet/sdk/3.1.108/Sdks"
 export ERL_AFLAGS="-kernel shell_history enabled" # saves iex history
 export WINIT_X11_SCALE_FACTOR=1
+export FZF_DEFAULT_COMMAND='rg --files --no-ignore-vcs --hidden'
 #"qt5ct"
 alias statusctl="sudo systemctl status "
 alias startctl="sudo systemctl start "
@@ -39,6 +40,9 @@ alias find="fd"
 alias mnthdd="sudo mount openwrt_router:/ /mnt/hdd"
 alias ccsi="chicken-csi"
 alias ssh="export TERM=xterm-color; ssh"
+alias tf="terraform"
+alias findcontent="grep -rnw './' -e "
 # for sway
 #export XKB_DEFAULT_LAYOUT=de
 #export _JAVA_AWT_WM_NONREPARENTING=1
+alias dc="sudo -E docker-compose"
