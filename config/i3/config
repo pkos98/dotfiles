@@ -44,12 +44,13 @@ bindsym $mod+w kill
 bindsym $alt+f exec firefox
 bindsym $alt+e exec pcmanfm
 bindsym $alt+m exec evolution
-bindsym $alt+b exec (echo "connect 4C:87:5D:53:7E:90" | bluetoothctl) && notify-send -i /usr/share/icons/Arc/devices/64/audio-headphones.png -t 4000 "Connecting to Ebenholz"
+#bindsym $alt+b exec (echo "connect 4C:87:5D:53:7E:90" | bluetoothctl) && notify-send -i /usr/share/icons/Arc/devices/64/audio-headphones.png -t 4000  "Connecting to Ebenholz" && pactl set-card-profile 0 "input:analog-stereo"
+bindsym $alt+b exec (echo "connect 4C:87:5D:53:7E:90" | bluetoothctl)
 bindsym $alt+ctrl+b exec (echo "connect B8:69:C2:59:3F:6A" | bluetoothctl) && notify-send -i /usr/share/icons/Arc/devices/64/audio-headphones.png -t 4000 "Connecting to JBL Everest 300"
 bindsym $alt+n exec nextcloud --background
 bindsym Print exec "flameshot gui"            
 bindsym ctrl+Print exec "flameshot screen -r" # capture current selected window
-bindsym ctrl+$alt+t exec WINIT_X11_SCALE_FACTOR=1 alacritty
+bindsym ctrl+$alt+t exec xdotool getactivewindow getwindowpid | xargs ps | grep "alacritty" && (xdotool getactivewindow getwindowpid | xargs pgrep -P | xargs pwdx | cut -d":" -f 2 | xargs alacritty --working-directory ) || WINIT_X11_SCALE_FACTOR=1 alacritty
 bindsym $alt+c exec code --ignore-gpu-blacklist
 bindsym XF86Mail exec evolution
 bindsym XF86AudioMute exec amixer sset Master toggle
@@ -62,6 +63,8 @@ bindsym XF86MonBrightnessUp exec xbacklight -inc 5
 # ctrl + alt + del to invoke locking
 bindsym ctrl+$alt+0xffff exec i3lock-fancy
 bindsym ctrl+Shift+$alt+s exec shutdown now
+bindsym $alt+a exec "python /home/pkos98/src/autozoom/autozoom.py 6600039535 005757"
+bindsym $alt+z exec "python /home/pkos98/src/autozoom/autozoom.py 6600039535 005757"
 
 ###### END CUSTOM KEYBINDINGS
 
@@ -218,5 +221,7 @@ force_focus_wrapping yes
 
 exec dex -ae i3 # starts all appropiate autostart applications: https://faq.i3wm.org/question/2155/how-can-i-use-autostart-desktop-files-in-i3.1.html
 exec python /home/pkos98/src/audiopy_server.py
+exec python /home/pkos98/src/bluemon.py &
+exec python /home/pkos98/src/usbmon.py &
 exec compton --config /home/pkos98/.config/compton.conf -b
 exec twmnd &
