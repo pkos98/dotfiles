@@ -9,13 +9,10 @@ set relativenumber
 set termguicolors
 let mapleader = ","
 let maplocalleader = ","
-colorscheme jellybeans
 
 
 " ==== plugins with their settings ====
 call plug#begin('/home/pkos98/.local/share/nvimplugged')
-
-Plug 'tomasr/molokai'
 
 Plug 'kassio/neoterm'
 let g:neoterm_default_mod='rightbelow' 
@@ -27,14 +24,7 @@ vnoremap <Leader>s :%TREPLSendSelection<CR>
 vnoremap <Leader>l :%TREPLSendLine<CR>
 
 
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-" navigate through completion suggestions with <Tab>
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-
 Plug 'itchyny/vim-gitbranch'
-
-Plug 'itchyny/lightline.vim'
 let g:lightline = {
       \ 'colorscheme': 'jellybeans',
       \ 'active': {
@@ -45,76 +35,59 @@ let g:lightline = {
       \   'gitbranch': 'gitbranch#name'
       \ },
       \ }
+Plug 'itchyny/lightline.vim'
 
-"Plug 'ryanoasis/vim-devicons' DEPRECATED
-Plug 'lambdalisue/nerdfont.vim'
-Plug 'lambdalisue/fern.vim'
-function! s:init_fern() abort
-    nmap <buffer><expr>
-      \ <Plug>(fern-my-expand-or-collapse)
-      \ fern#smart#leaf(
-      \   "\<Plug>(fern-action-collapse)",
-      \   "\<Plug>(fern-action-expand)",
-      \   "\<Plug>(fern-action-collapse)",
-      \ )
-nmap <buffer><nowait> l <Plug>(fern-my-expand-or-collapse)
-endfunction
-augroup fern-custom
-  autocmd! *
-  autocmd FileType fern call s:init_fern()
-augroup END
-Plug 'lambdalisue/fern-renderer-nerdfont.vim'
-let g:fern#renderer = "nerdfont"
-"let g:fern#renderer = "devicons" DEPRECATED
-"Plug 'lambdalisue/fern-renderer-devicons.vim' DEPRECATED
+"Plug 'junegunn/fzf.vim'
+"let g:fzf_layout = { 'down': '40%' }
+Plug 'nvim-lua/popup.nvim'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
 
-"Plug 'jpalardy/vim-slime', {'branch': 'main'}
-"let g:slime_target = "neovim"
-"nmap <c-c><c-x> :%SlimeSend<cr>
+Plug 'nvim-treesitter/nvim-treesitter'
 
-Plug 'junegunn/fzf.vim'
-let g:fzf_layout = { 'down': '40%' }
+Plug 'neovim/nvim-lspconfig'
 
-Plug 'wlangstroth/vim-racket'
-Plug 'elixir-editors/vim-elixir'
-Plug 'hashivim/vim-terraform'
+Plug 'nvim-lua/completion-nvim'
 
-" Initialize plugin system
+Plug 'famiu/nvim-reload'
+
+Plug 'RRethy/nvim-base16'
+
 call plug#end() " calls syntax on & filetype autoindent on automatically
 
-" ==== keybindings ====
+lua << EOF
+require'lspconfig'.pyright.setup{on_attach=require'completion'.on_attach}
+require'lspconfig'.bashls.setup{}
+--require'lspconfig'.pyls.setup{on_attach=require'completion'.on_attach}
+require('base16-colorscheme').setup('schemer-dark')
+EOF
 
-map <C-e> :Fern . -reveal=% -drawer -toggle<CR>
+" ==== keybindings ====
 map <C-t> :terminal<CR>
 
 " switch to right tab using '>' key
 nnoremap > gt
 nnoremap < gT
+
+" Use <Tab> and <S-Tab> to navigate through popup menu
+inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+" Set completeopt to have a better completion experience
+set completeopt=menuone,noinsert,noselect
+" Avoid showing message extra message when using completion
+set shortmess+=c
+
+
 " switch tab by pressing <Alt>-<F-<tabnum>>
-nnoremap <A-F1> 1gt
-nnoremap <A-F2> 2gt
-nnoremap <A-F3> 3gt
-nnoremap <A-F4> 4gt
-nnoremap <A-F5> 5gt
-
 map <C-t> :T #Welcome to NeoTerm<CR>
-
 tnoremap <Esc> <C-\><C-n>
 
-" Use Ctrl+q to show documentation in preview window
-nnoremap <C-q> :call <SID>show_documentation()<CR>
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  else
-    call CocAction('doHover')
-  endif
-endfunction
+nnoremap <C-p> <cmd>lua require('telescope.builtin').find_files()<cr>
+nnoremap <C-f> <cmd>lua require('telescope.builtin').live_grep()<cr>
+nnoremap <C-b> <cmd>lua require('telescope.builtin').buffers()<cr>
+nnoremap <C-e> <cmd>lua require('telescope.builtin').file_browser()<cr>
 
-nnoremap <C-p> :FZF<CR>
-nnoremap <C-f> :Rg<CR>
-autocmd! FileType fzf tnoremap <buffer> <C-l> :q<CR>
-
+"autocmd! FileType fzf tnoremap <buffer> <C-l> :q<CR>
 autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 autocmd FileType sh setlocal ts=4 sts=4 sw=4 expandtab
 autocmd FileType vim setlocal ts=4 sts=4 sw=4 expandtab
