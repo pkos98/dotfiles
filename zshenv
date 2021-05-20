@@ -16,7 +16,7 @@ export QT_QPA_PLATFORMTHEME="gtk2"
 #export AWT_TOOLKIT=MToolkit # for better java guis, see here:https://wiki.archlinux.org/index.php/Java#IntelliJ_IDEA
 export DOTNET_CLI_TELEMETRY_OPTOUT=1 # disable .net core telemetry
 export DOTNET_ROOT=/usr/share/dotnet
-export MSBuildSDKsPath="/usr/share/dotnet/sdk/3.1.108/Sdks"
+export MSBuildSDKsPath="/usr/share/dotnet/sdk/5.0.104/Sdks"
 export ERL_AFLAGS="-kernel shell_history enabled" # saves iex history
 export WINIT_X11_SCALE_FACTOR=1
 export FZF_DEFAULT_COMMAND='rg --files --no-ignore-vcs --hidden'
@@ -46,3 +46,5 @@ alias findcontent="grep -rnw './' -e "
 #export XKB_DEFAULT_LAYOUT=de
 #export _JAVA_AWT_WM_NONREPARENTING=1
 alias dc="sudo -E docker-compose"
+alias mntnas="curlftpfs pkos98:${FRITZBOX_PW}@fritz.nas /mnt/nas -o rw,uid=1000,gid=985,umask=002"
+
