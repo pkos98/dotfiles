@@ -1,3 +1,8 @@
+# Ensure that a non-login, non-interactive shell has a defined environment.
+if [[ ( "$SHLVL" -eq 1 && ! -o LOGIN ) && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
+  source "${ZDOTDIR:-$HOME}/.zprofile"
+fi
+
 source ~/.zshenv.secret
 export EDITOR=nvim
 export BROWSER=firefox
@@ -42,9 +47,8 @@ alias ccsi="chicken-csi"
 alias ssh="export TERM=xterm-color; ssh"
 alias tf="terraform"
 alias findcontent="grep -rnw './' -e "
+alias dc="sudo -E docker-compose"
+alias mntnas="curlftpfs pkos98:${FRITZBOX_PW}@fritz.nas /mnt/nas -o rw,uid=1000,gid=985,umask=002"
 # for sway
 #export XKB_DEFAULT_LAYOUT=de
 #export _JAVA_AWT_WM_NONREPARENTING=1
-alias dc="sudo -E docker-compose"
-alias mntnas="curlftpfs pkos98:${FRITZBOX_PW}@fritz.nas /mnt/nas -o rw,uid=1000,gid=985,umask=002"
-
