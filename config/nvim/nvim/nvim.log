@@ -1,0 +1,45 @@
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.055  000.055: --- NVIM STARTING ---
+001.003  000.948: locale set
+002.044  001.041: inits 1
+002.102  000.059: window checked
+002.129  000.027: parsing arguments
+002.346  000.217: expanding arguments
+002.510  000.164: inits 2
+004.505  001.995: init highlight
+004.539  000.034: waiting for UI
+.config/nvim [ /bin/nvim --startuptime /dev/stdout +qall                                          ] 6:28
+
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.073  000.073: --- NVIM STARTING ---
+000.424  000.351: locale set
+000.781  000.357: inits 1
+000.800  000.019: window checked
+000.806  000.006: parsing arguments
+000.864  000.058: expanding arguments
+000.919  000.055: inits 2
+001.472  000.553: init highlight
+001.477  000.005: waiting for UI
+.config/nvim [ /bin/nvim --startuptime /dev/stdout +qall                                          ] 6:28
+
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.019  000.019: --- NVIM STARTING ---
+000.365  000.346: locale set
+000.719  000.354: inits 1
+000.739  000.020: window checked
+000.745  000.006: parsing arguments
+000.801  000.055: expanding arguments
+000.868  000.067: inits 2
+001.689  000.821: init highlight
+001.716  000.027: waiting for UI

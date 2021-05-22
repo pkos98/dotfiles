@@ -1,0 +1,12 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =1
+let g:netrw_dirhist_1='/tmp'
+let g:netrw_dirhist_0='/'
+let g:netrw_dirhist_9='/tmp'
+let g:netrw_dirhist_8='/home/pkos98/.local/share/nvimplugged/lightline.vim/autoload/lightline/colorscheme'
+let g:netrw_dirhist_7='/home/pkos98/.local/share/nvimplugged/lightline.vim/autoload/lightline'
+let g:netrw_dirhist_6='/tmp/gs-spring-boot/complete/build'
+let g:netrw_dirhist_5='/tmp'
+let g:netrw_dirhist_4='/home/pkos98/src/work/marketplace/images/docker-compose'
+let g:netrw_dirhist_3='/home/pkos98/src/work'
+let g:netrw_dirhist_2='/home/pkos98/src/uni/wlanbot/backend/lib/wlanbot/router'
