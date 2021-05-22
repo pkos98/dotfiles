@@ -1,0 +1,12 @@
+[dotfiles]
+repository = ~/Dotfiles
+ignore = [
+    '.git',
+    '.gitignore',
+    '*.swp',
+    'install'
+    'install/pkglist'
+    'pkglist'
+    'install/install.sh'
+    'install.sh'
+]
