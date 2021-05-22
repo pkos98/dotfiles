@@ -54,6 +54,6 @@ xset 0 240 # lock screen after 240 seconds. NOTE: standby=suspend on this monito
 msg_txt="Architect is going to lock due to inactivity"
 xss-lock -n "notify-send -t 3000 -i notification-display-brightness Autolock '$msg_txt'" i3lock-fancy &
 urxvtd -q -o -f
-wmname compiz # must be executed before i3
+wmname i3 # must be executed before i3, compiz is executed within i3rc
 exec i3
 exec nm-applet
