@@ -1,0 +1,12 @@
+[Trigger]
+Type = Package
+Operation = Upgrade
+Operation = Install 
+Target = neovim
+Target = neovim-nightly-git
+Target = neovim-nightly-bin
+
+[Action]
+Description = Reduce neovim startuptime for python files signifcantly by removing the unused builtin automcompletion&syntax handler
+When = PostTransaction
+Exec = /bin/sh -c "echo [+] Removing pythonx file from autoload folder; rm /usr/share/nvim/runtime/autoload/provider/pythonx.vim"

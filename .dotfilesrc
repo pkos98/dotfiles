@@ -1,12 +1,13 @@
 [dotfiles]
-repository = ~/Dotfiles
+repository = ~/src/dotfiles
 ignore = [
     '.git',
     '.gitignore',
     '*.swp',
     'install'
-    'install/pkglist'
-    'pkglist'
-    'install/install.sh'
-    'install.sh'
-]
+    'install/pkglist',
+    'pkglist',
+    'install/install.sh',
+    'install.sh',
+    'install/50-nvim-clean.hook',
+    '50-nvim-clean.hook']

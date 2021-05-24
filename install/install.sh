@@ -23,8 +23,15 @@ pip install --user dotfiles
 echo "[+] Applying dotfiles"
 export PATH="$PATH:$HOME/.local/bin"
 dotfiles sync --dry-run --repo="/home/$USER/src/dotfiles"
-echo "  Do you want to apply the dotfiles? y/n"
-read $apply_dotfiles
-[ $apply_dotfiles = "y" ] && dotfiles sync --repo="/home/pkos98/src/dotfiles"
+echo -n "  -> Do you want to apply the dotfiles? y/n"; read apply_dotfiles
+[ $apply_dotfiles = "y" ] && dotfiles sync --repo="/home/$USER/src/dotfiles"
+
+echo "[+] Installing paq package manager for neovim..."
+git clone https://github.com/savq/paq-nvim.git \
+    "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/pack/paqs/opt/paq-nvim
+
+echo "[+] Installing pacman hook"
+[ -d /etc/pacman.d/hooks ] || sudo mkdir /etc/pacman.d/hooks
+sudo cp ../install/50-nvim-clean.hook /etc/pacman.d/hooks/
 
 cd "$old_cwd"

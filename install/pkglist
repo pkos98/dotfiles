@@ -2,9 +2,9 @@ i3-wm
 i3lock
 i3lock-fancy-git
 i3status
-picom
+picom                               # composition manager
 nm-connection-editor-indicator
-libnma-indicator
+libnma-indicator                    
 chromium
 firefox
 1password
@@ -12,8 +12,8 @@ alacritty
 pcmanfm
 evolution
 flameshot
-dex
-twmnd
+dex                                 # desktop entry execution
+twmn-git                            # notification manager appropriate for tiling wim
 zsh
 python-pip
 neovim-nightly-git
