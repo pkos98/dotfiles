@@ -196,7 +196,6 @@ mode "resize" {
 bindsym $mod+r mode "resize"
 
 # kill any previously started bars
-exec pkill -SIGUSR1 -f "python /home/user/.config/i3/pystatus.py"
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
@@ -223,5 +222,5 @@ exec dex -ae i3 # starts all appropiate autostart applications: https://faq.i3wm
 exec python /home/pkos98/src/audiopy_server.py
 exec python /home/pkos98/src/bluemon.py &
 exec python /home/pkos98/src/usbmon.py &
-exec compton --config /home/pkos98/.config/compton.conf -b
+exec picom --no-startup-id -b
 exec twmnd &
