@@ -17,3 +17,13 @@ twmn-git                            # notification manager appropriate for tilin
 zsh
 python-pip
 neovim-nightly-git
+# nvim lsp servers
+pyright
+rust-analyzer
+#npm i -g bash-language-server
+racket
+#raco pkg install --auto racket-langserver
+terraform-ls-bin
+deno
+gopls
+#npm install -g vscode-json-languageserver
