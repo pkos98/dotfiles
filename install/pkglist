@@ -2,9 +2,9 @@ i3-wm
 i3lock
 i3lock-fancy-git
 i3status
-picom                               # composition manager
+picom
 nm-connection-editor-indicator
-libnma-indicator                    
+libnma-indicator
 chromium
 firefox
 1password
@@ -12,18 +12,15 @@ alacritty
 pcmanfm
 evolution
 flameshot
-dex                                 # desktop entry execution
-twmn-git                            # notification manager appropriate for tiling wim
+dex
+twmn-git
 zsh
 python-pip
 neovim-nightly-git
-# nvim lsp servers
+nvm
 pyright
 rust-analyzer
-#npm i -g bash-language-server
 racket
-#raco pkg install --auto racket-langserver
 terraform-ls-bin
 deno
 gopls
-#npm install -g vscode-json-languageserver

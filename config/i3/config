@@ -222,5 +222,6 @@ exec dex -ae i3 # starts all appropiate autostart applications: https://faq.i3wm
 exec python /home/pkos98/src/audiopy_server.py
 exec python /home/pkos98/src/bluemon.py &
 exec python /home/pkos98/src/usbmon.py &
-exec picom --no-startup-id -b
+exec xrandr --output eDP1 --gamma 1:1:1 --brightness 1.0
+exec --no-startup-id picom -b
 exec twmnd &

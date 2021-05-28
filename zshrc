@@ -66,3 +66,7 @@ dl()
 ul() {
     curl -F "data=@${1}" https://pkos98.dev/storage
 }
+
+init_nvm() {
+    source /usr/share/nvm/init-nvm.sh
+}
