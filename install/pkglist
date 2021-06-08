@@ -7,8 +7,11 @@ nm-connection-editor-indicator
 libnma-indicator
 chromium
 firefox
-1password
 alacritty
+ttf-iosevka
+ttf-hack
+nerd-fonts-iosevka
+elixir
 pcmanfm
 evolution
 flameshot
@@ -24,3 +27,8 @@ racket
 terraform-ls-bin
 deno
 gopls
+papirus-icon-theme
+adwaita-icon-theme
+cantarell-fonts
+arc-gtk-theme
+arc-icon-theme

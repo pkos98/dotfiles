@@ -34,7 +34,7 @@ window_options = {
 buffer_options = {
     expandtab = true;                           -- Use spaces instead of tabs
     shiftwidth = indent;                        -- Size of an indent
-    smartindent = true;                        -- Insert indents automatically
+    smartindent = true;                         -- Insert indents automatically
     tabstop = indent;                           -- Number of spaces tabs count for
 }
 

@@ -5,8 +5,6 @@ cmd([[let g:loaded_python3_provider=0]])
 cmd([[let g:loaded_pythonx_provider=0]])
 
 require('general/settings')                 -- General settings for global, window and buffer scopes
-require('general/mappings')                 -- General keymappings independent from plugins
-
-
 require('plugins')                          -- Load plugins using paq
+require('general/mappings')                 -- General keymappings independent from plugins
 require('base16-colorscheme').setup('schemer-dark')

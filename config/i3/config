@@ -63,8 +63,8 @@ bindsym XF86MonBrightnessUp exec xbacklight -inc 5
 # ctrl + alt + del to invoke locking
 bindsym ctrl+$alt+0xffff exec i3lock-fancy
 bindsym ctrl+Shift+$alt+s exec shutdown now
-bindsym $alt+a exec "python /home/pkos98/src/autozoom/autozoom.py 6600039535 005757"
-bindsym $alt+z exec "python /home/pkos98/src/autozoom/autozoom.py 6600039535 005757"
+bindsym $alt+i exec ~/src/idea_selector.py
+bindsym ctrl+$alt+0 exec xrandr --output eDP1 --gamma 1:1:1 --brightness 1.0
 
 ###### END CUSTOM KEYBINDINGS
 
@@ -222,6 +222,5 @@ exec dex -ae i3 # starts all appropiate autostart applications: https://faq.i3wm
 exec python /home/pkos98/src/audiopy_server.py
 exec python /home/pkos98/src/bluemon.py &
 exec python /home/pkos98/src/usbmon.py &
-exec xrandr --output eDP1 --gamma 1:1:1 --brightness 1.0
 exec --no-startup-id picom -b
 exec twmnd &
