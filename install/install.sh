@@ -14,8 +14,11 @@ echo "[+] Installing paq package manager for neovim..."
 git clone https://github.com/savq/paq-nvim.git \
     "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/pack/paqs/opt/paq-nvim
 
-echo "[+] Applying dotfiles..."
-elixir dotman.exs --dotfiles-dir "$HOME/src/dotfiles" --home-dir "$HOME"
+echo "[+] Installing python package needed for i3bar..."
+pip install --user i3pystatus basiciw
+
+echo "[+] Expanding dotfile symlinks..."
+elixir dotman.exs --dotfiles-dir "$USER/src/dotfiles" --home-dir "$HOME"
 
 echo "[+] Setting up zsh as default terminal along with prezto..."
 git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}/.zprezto"
