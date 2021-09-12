@@ -515,6 +515,11 @@ shell:
 #
 # If the same trigger is assigned to multiple actions, all of them are executed
 # at once.
+key_bindings:
+  - { key: A, mods: Control|Shift, chars: "\x1b[65;5u" }
+  - { key: N, mods: Control|Shift, chars: "\x1b[78;5u" }
+  - { key: 1, mods: Alt,           chars: "\x1b1"      }
+
 #key_bindings:
   # (Windows, Linux, and BSD only)
   #- { key: V,        mods: Control|Shift, action: Paste            }
