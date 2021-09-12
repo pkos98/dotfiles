@@ -1,42 +1,64 @@
 local g = vim.g
-local api = vim.api
 local cmd = vim.cmd
+local mapper = require('nvim-mapper')
+local iron = require('iron')
 
 g.mapleader = ','
 g.localleader = ','
 
-local function init_lsp_mappings(buf_set_keymap, opts) 
-  buf_set_keymap('n', '<F12>', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  buf_set_keymap('n', '<C-q>', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
-  buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-  buf_set_keymap('n', '<C-r>r', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-  buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-  buf_set_keymap('n', '<C-<F12>>', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
-  buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-  buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-  buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
-  buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+
+local function init_lsp_mappings(buf_set_keymap, opts)
+  buf_set_keymap('n','gd','<cmd>lua vim.lsp.buf.definition()<CR>', opts, "LSP", "lsp_definitions", "Go to definitions")
+  buf_set_keymap('n','gD','<cmd>lua vim.lsp.buf.definition()<CR>', opts, "LSP", "lsp_definitions_2", "Go to definitions")
+  buf_set_keymap('n','gs','<cmd>lua vim.lsp.buf.signature_help()<CR>', opts, "LSP", "lsp_signature", "View signature")
+  buf_set_keymap('n','ca','<cmd>lua vim.lsp.buf.code_action()<CR>', opts, "LSP", "lsp_quick_action", "Invoke quick actions")
+  buf_set_keymap('n','<leader>qq','<cmd>lua vim.lsp.buf.hover()<CR>', opts, "LSP", "lsp_hover", "Hover")
+  buf_set_keymap('n','<leader>rr','<cmd>lua vim.lsp.buf.rename()<CR>', opts, "LSP", "lsp_rename", "Rename symbol")
+  buf_set_keymap('n','<leader>ff', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts, "LSP", "lsp_format", "format")
 end
 
-function _G.find_files_nvim_config()
-  require("telescope.builtin").file_browser {
-    follow = true,
-    cwd = "~/.config/nvim",
-    prompt = "dotfiles",
-    heigth = 10,
-    layout_strategy = "horizontal",
-    layout_options = {
-      preview_width = 0.75,
-    },
-  }
+local function has_value (tab, val)
+    for index, value in ipairs(tab) do
+        if value == val then
+            return index
+        end
+    end
+
+    return false
 end
 
-api.nvim_set_keymap('n', '<leader>fn', [[:lua find_files_nvim_config()<CR>]], { noremap = true, silent = false })
-api.nvim_set_keymap('n', '<C-f>', [[:lua require('telescope.builtin').live_grep()<CR>]], { noremap = true, silent = false })
-api.nvim_set_keymap('n', '<C-p>', [[:lua require('telescope.builtin').find_files()<CR>]], { noremap = true, silent = false })
-api.nvim_set_keymap('n', '<C-e>', [[:lua require('telescope.builtin').file_browser()<CR>]], { noremap = true, silent = false })
-api.nvim_set_keymap('n', '<C-,>', [[:lua require('telescope.builtin').lsp_references()<CR>]], { noremap = true, silent = false })
+
+-- Toggles an iron repl with the addition of creating a zsh repl as fallback if the
+-- current buffer's filetype doesnt have any repl mapping
+function Iron_repl_with_fallback()
+  local ft = vim.bo.filetype
+    if ft == '' or has_value(iron.core.list_fts(), ft) == false then
+      cmd([[:IronRepl zsh]])
+    else
+      cmd([[:IronRepl]])
+  end
+end
+
+function Iron_send_file()
+  local content = vim.api.nvim_buf_get_lines(0, 0, vim.api.nvim_buf_line_count(0), false)
+  content = table.concat(content, "\n")
+  local ft = vim.bo.filetype
+  iron.core.send(ft, content)
+end
+
+
+mapper.map('n', '<C-f>', [[:Telescope live_grep<CR>]], { noremap = true, silent = false }, "Telescope", "telescope_grep", "Find text")
+mapper.map('n', '<C-p>', [[:Telescope find_files<CR>]], { noremap = true, silent = false }, "Telescope", "telescope_file", "Find file")
+--mapper.map('n', '<C-e>', [[:Telescope file_browser theme=get_ivy<CR>]], { noremap = true, silent = false }, "Telescope", "telescope_explorer", "File explorer")
+mapper.map('n', '<leader>fn', [[:Telescope find_files follow=true cwd=~/.config/nvim prompt=nvim-config<CR>]], { noremap = true, silent = false }, "Telescope", "telescope_neovim_settings", "Neovim settings")
+mapper.map('n', '<C-p>', [[:Telescope project<CR>]], { noremap = true, silent = true }, "Telescope", "telescope_project_find", "Find project")
+mapper.map('n', '<leader>mm', [[\MM]], { noremap = false, silent = true }, "Telescope", "telescope_action", "Find action")
+mapper.map('n', '<C-S-a>', [[\MM]], { noremap = false, silent = true }, "Telescope", "telescope_action2", "Find action")
+
+-- for gui
+mapper.map('n', '<C-S-n>', [[:Telescope find_files<CR>]], { noremap = true, silent = false }, "Telescope", "telescope_file_gui", "Find file")
+mapper.map('n', '<C-n>', [[:Telescope find_files<CR>]], { noremap = true, silent = false }, "Telescope", "telescope_file_gui2", "Find file")
+mapper.map('n', '<A-1>', [[:Telescope file_browser theme=get_ivy<CR>]], { noremap = true, silent = false }, "Telescope", "telescope_explorer_gui", "File explorer")
 
 -- Support autocompletion navigation using TABs
 vim.api.nvim_set_keymap('i', '<S-Tab>', 'pumvisible() ? "\\<C-p>" : "\\<Tab>"', {expr = true})
@@ -48,17 +70,17 @@ cmd([[inoremap <silent><expr> <C-e>     compe#close('<C-e>')]])
 cmd([[inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })]])
 cmd([[inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })]])
 
-cmd([[nmap <C-t>        :IronRepl<CR>]])
-cmd([[nmap <leader>t    <Plug>(iron-send-motion)]])
-cmd([[nmap <leader>a    <Plug>(iron-send-file)]])
-cmd([[vmap <leader>v    <Plug>(iron-visual-send)]])
-cmd([[nmap <leader>r    <Plug>(iron-repeat-cmd)]])
-cmd([[nmap <leader>l    <Plug>(iron-send-line)]])
-cmd([[nmap <localleader><CR> <Plug>(iron-cr)]])
-cmd([[nmap <localleader>i    <plug>(iron-interrupt)]])
-cmd([[nmap <localleader>q    <Plug>(iron-exit)]])
-cmd([[nmap <localleader>c    <Plug>(iron-clear)]])
+--mapper.map('n', '<C-t>', [[:IronRepl<CR>]], {}, "Iron", "iron_repl", "Toggle Iron REPL")
+mapper.map('n', '<C-t>', [[:lua Iron_repl_with_fallback()<CR>]], {}, "Iron", "iron_repl", "Toggle Iron REPL")
+mapper.map('t', '<C-t>', [[:lua Iron_repl_with_fallback()<CR>]], {}, "Iron", "iron_repl_terminal-mode", "Toggle Iron REPL")
+mapper.map('n', '<leader>ta', [[:lua Iron_send_file()<CR>]], {}, "Iron", "iron_send_file", "Send file content to Iron REPL")
+mapper.map('n', '<leader>tf', [[:lua Iron_send_file()<CR>]], {}, "Iron", "iron_send_file2", "Send file content to Iron REPL")
+mapper.map('v', '<leader>tv', [[<Plug>(iron-visual-send)]], {}, "Iron", "iron_send_visual", "Send visual selection to Iron REPL")
+mapper.map('n', '<leader>tl', [[<Plug>(iron-send-line)]], {}, "Iron", "iron_send_line", "Send current line to Iron REPL")
+--cmd([[au BufLeave terminal noremap <silent> <C-t> :IronRepl<CR>]])
 
+
+-- exit terminal mode with <Esc>
 cmd([[tnoremap <Esc> <C-\><C-n>]])
 
 return {
