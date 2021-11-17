@@ -12,6 +12,42 @@ local nvim_lsp = require('lspconfig')
 for _, lsp in ipairs( {"pyright", "bashls", "rust_analyzer", "racket_langserver", "terraformls", "denols", "jsonls", "gopls"} ) do
     nvim_lsp[lsp].setup { on_attach= on_attach}
 end
+nvim_lsp.diagnosticls.setup{
+  on_attach=on_attach,
+  filetypes= {"sh", "bash", "zsh"},
+   init_options = {
+    linters = {
+      shellcheck = {
+	   command = 'shellcheck',
+            debounce = 100,
+            args = { '--format=gcc', '-'},
+            offsetLine = 0,
+            offsetColumn = 0,
+            sourceName = 'shellcheck',
+            formatLines = 1,
+            formatPattern = {
+              '^[^:]+:(\\d+):(\\d+):\\s+([^:]+):\\s+(.*)$',
+              {
+                line = 1,
+                column = 2,
+                message = 4,
+                security = 3
+              }
+	    },
+            securities = {
+              error = 'error',
+              warning = 'warning',
+              note = 'info'
+            }
+          },
+	filetypes = {
+	  bash = 'shellcheck',
+	  sh = 'shellcheck',
+	  zsh = 'shellcheck'
+	}
+      }
+  }
+}
 nvim_lsp.elixirls.setup { on_attach=on_attach; cmd={ "/opt/elixir-ls/language_server.sh" }}
 
 local runtime_path = vim.split(package.path, ';')

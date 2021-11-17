@@ -35,6 +35,7 @@ local window_options = {
 local buffer_options = {
     expandtab = true;                           -- Use spaces instead of tabs
     shiftwidth = indent;                        -- Size of an indent
+    autoindent = true;
     smartindent = true;                         -- Insert indents automatically
     tabstop = indent;                           -- Number of spaces tabs count for
 }
@@ -52,3 +53,10 @@ vim.cmd([[au BufRead,BufNewFile *.json set filetype=json]])
 vim.cmd([[au BufRead,BufNewFile *.lua set shiftwidth=2]])
 vim.cmd([[au BufRead,BufNewFile *.rkt set shiftwidth=2]])
 vim.cmd([[au UIEnter * lua require('general/gui')]])
+-- remember cursor pos
+vim.cmd([[
+augroup vimrc-remember-cursor-position
+    autocmd!
+    autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+augroup END
+]])
