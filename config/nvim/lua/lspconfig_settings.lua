@@ -1,6 +1,39 @@
 local mappings = require('general/mappings')
 local mapper = require('nvim-mapper')
 
+
+
+local M = {}
+M.icons = {
+  Class = "ꓚ ",
+  Color = " ",
+  Constant = " ",
+  Constructor = " ",
+  Enum = "🇪 ",
+  EnumMember = " ",
+  Field = " ",
+  File = " ",
+  Folder = " ",
+  Function = " ",
+  Interface = "ﰮ ",
+  Keyword = " ",
+  Method = "ƒ ",
+  Module = " ",
+  Property = " ",
+  Snippet = "﬌ ",
+  Struct = " ",
+  Text = " ",
+  Unit = " ",
+  Value = " ",
+  Variable = " ",
+}
+
+-- assign icons
+local kinds = vim.lsp.protocol.CompletionItemKind
+for i, kind in ipairs(kinds) do
+  kinds[i] = M.icons[kind] or kind
+end
+
 local on_attach = function(_, bufnr)
   local function buf_set_keymap(...) mapper.map_buf(bufnr, ...) end
   local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end

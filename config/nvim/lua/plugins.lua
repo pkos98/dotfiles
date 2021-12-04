@@ -29,6 +29,7 @@ require('packer').startup(function(use)
     ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
     highlight = {
       enable = true,              -- false will disable the whole extension
+      disable = { "elixir" },  -- list of language that will be disabled
     },
     incremental_selection = {
 	enable = true
@@ -98,15 +99,13 @@ require('packer').startup(function(use)
 
   use "b0o/schemastore.nvim"
   require('lspconfig').jsonls.setup {
-  settings = {
-    json = {
-      schemas = require('schemastore').json.schemas(),
+    settings = {
+      json =
+      {
+	schemas = require('schemastore').json.schemas(),
+      },
     },
-  },
-}
-
-
-
+  }
   use 'kyazdani42/nvim-tree.lua'
   require'nvim-tree'.setup {
   nvim_tree_side = "left",
