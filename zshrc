@@ -1,72 +1,53 @@
-#
-# Executes commands at the start of an interactive session.
-#
-# Authors:
-#   Sorin Ionescu <sorin.ionescu@gmail.com>
-#
-
-# Source Prezto.
-if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
-  source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+# where do you want to store your plugins?
+ZPLUGINDIR=$HOME/.config/zsh/plugins
+SAVEHIST=1000  # Save most-recent 1000 lines
+HISTSIZE=1000
+HISTFILE=~/.zsh_history
 
-# Set name of the theme to load. Optionally, if you set this to "random"
-# it'll load a random theme each time that oh-my-zsh is loaded.
-# See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME="nanotech"
+# get zsh_unplugged and store it with your other plugins
+if [[ ! -d $ZPLUGINDIR/zsh_unplugged ]]; then
+  git clone --quiet https://github.com/mattmc3/zsh_unplugged $ZPLUGINDIR/zsh_unplugged
+fi
+source $ZPLUGINDIR/zsh_unplugged/zsh_unplugged.zsh
 
-# Uncomment the following line if you want to disable marking untracked files
-# under VCS as dirty. This makes repository status check for large repositories
-# much, much faster.
-DISABLE_UNTRACKED_FILES_DIRTY="true"
-
-# Uncomment the following line if you want to change the command execution time
-# stamp shown in the history command output.
-# The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
-# HIST_STAMPS="mm/dd/yyyy"
-
-# Would you like to use another custom folder than $ZSH/custom?
-# ZSH_CUSTOM=/path/to/new-custom-folder
-
-# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
-# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
-plugins=(
-  git
-  history-substring-search
-  fast-syntax-highlighting
+# make list of the Zsh plugins you use
+repos=(
+  #zdharma/fast-syntax-highlighting
+  # other plugins
+  #zsh-users/zsh-completions
+  #zsh-users/zsh-syntax-highlighting
+  z-shell/F-Sy-H
+  zsh-users/zsh-history-substring-search
+  # joshskidmore/zsh-fzf-history-search
 )
 
-# Needs to be executed before sourcing
-# Allows root to use autocomplete
-export ZSH_DISABLE_COMPFIX=true
-# .zshrc.pre-oh-my-zsh
-# Lines configured by zsh-newuser-ifnstall
-HISTFILE=~/.histfile
-HISTSIZE=250
-SAVEHIST=250
-setopt autocd
-unsetopt beep
+# now load your plugins
+plugin-load $repos
+source $ZPLUGINDIR/dotenv.plugin.zsh
 bindkey -v
-# End of lines configured by zsh-newuser-install
-# The following lines were added by compinstall
-zstyle :compinstall filename '/home/pkos98/.zshrc'
-autoload -Uz compinit
-compinit
-# End of lines added by compinstall
-zstyle ':completion:*' menu select
+export KEYTIMEOUT=1
+source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
 
-dl()
-{ 
-        curl -o "$1" "https://pkos98.dev/storage/$1"
-}
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
 
-ul() {
-    curl -F "data=@${1}" https://pkos98.dev/storage
-}
+autoload -U +X compinit && compinit
+#source /usr/share/zsh/vendor-completions/kubectl.zsh
 
-init_nvm() {
-    source /usr/share/nvm/init-nvm.sh
-}
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+source ~/.p10k.zsh
+setopt HIST_IGNORE_ALL_DUPS
+
+[[ $- == *i* ]] && source "/tmp/fzf/shell/completion.zsh" 2> /dev/null
+source "${ZPLUGINDIR}/fzf-key-bindings.zsh"
+
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
