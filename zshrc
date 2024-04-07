@@ -51,3 +51,9 @@ source "${ZPLUGINDIR}/fzf-key-bindings.zsh"
 export PYENV_ROOT="$HOME/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
+
+python_venv() {
+  [[ -d "./.venv" ]] && source ./.venv/bin/activate > /dev/null 2>&1
+}
+autoload -U add-zsh-hook
+add-zsh-hook chpwd python_venv

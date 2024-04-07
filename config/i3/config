@@ -40,7 +40,6 @@ bindsym $mod+Return exec i3-sensible-terminal
 ###### CUSTOM KEYBINDINGS
 # start dmenu (a program launcher)
 bindsym $alt+d exec "rofi -modi drun,run -show drun -show-icons"
-bindsym ctrl+w nop
 
 bindsym $mod+w kill
 bindsym $alt+f exec firefox
@@ -57,8 +56,8 @@ bindsym $alt+c exec code --ignore-gpu-blacklist
 bindsym $alt+space exec rofi -modi emoji -show emoji
 bindsym XF86Mail exec evolution
 bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
-bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5%  
-bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%  
+bindsym XF86AudioRaiseVolume exec ~/src/volume -n up 5
+bindsym XF86AudioLowerVolume exec ~/src/volume -n down 5
 bindsym XF86AudioPlay exec "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.PlayPause"
 bindsym XF86AudioNext exec "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Next"
 bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
@@ -223,13 +222,9 @@ for_window [class="^.*"] border pixel 2
 focus_follows_mouse yes
 force_focus_wrapping yes
 
-# starts all appropiate autostart applications: https://faq.i3wm.org/question/2155/how-can-i-use-autostart-desktop-files-in-i3.1.html
-exec dex -ae i3 
+exec dex -ae i3 # starts all appropiate autostart applications: https://faq.i3wm.org/question/2155/how-can-i-use-autostart-desktop-files-in-i3.1.html
 exec python /home/pkos98/src/audiopy_server.py
 exec python /home/pkos98/src/bluemon.py &
 exec python /home/pkos98/src/usbmon.py &
 exec --no-startup-id picom -b
-exec twmnd &
-exec_always --no-startup-id bash /home/pkos98/.config/polybar/launch.sh --hack &
-exec xmodmap -e 'keycode 134 = Tab Tab'
-#exec setxkbmap -option compose:ralt
+#exec twmnd &
