@@ -1,7 +1,7 @@
 # vi: ft=bash
 export EDITOR=nvim
 export VISUAL=nvim
-export PATH="${PATH}:/home/pkos98/bin"
+export PATH="${PATH}:/home/pkos98/bin:/home/pkos98/.local/bin"
 export ZSH_FZF_HISTORY_SEARCH_DATES_IN_SEARCH=0 # disable
 export ZSH_FZF_HISTORY_SEARCH_EVENT_NUMBERS=0
 export SHELL=/usr/bin/zsh
@@ -24,9 +24,21 @@ alias cdn="cd ~/.config/nvim"
 alias lg=lazygit
 alias nvimdiff="nvim -d"
 alias vimdiff="nvim -d"
+alias lllm="~/.local/bin/llm"
+alias llmm="~/.local/bin/llm"
 
 source ~/.zshenv.secret
 
 function always() {
   while true; do $@; done
+}
+
+function llm() {
+  local input="$*"
+  ~/.local/bin/llm -s 'Answer as short and concise as possible' ${input} | glow
+}
+
+function llmo() {
+  local input="$*"
+  ~/.local/bin/llm prompt -m 4o "$input"
 }
