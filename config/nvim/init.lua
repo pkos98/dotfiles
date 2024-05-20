@@ -1,5 +1,5 @@
 -- ########################
--- #	VIM SETTINGS 	      #
+-- #    VIM SETTINGS      #
 -- ########################
 vim.g.mapleader = ","
 vim.opt.grepprg = "rg --vimgrep --smart-case"
@@ -20,12 +20,12 @@ vim.o.splitbelow = true
 vim.o.splitright = true
 vim.o.cmdheight = 0
 vim.g.updatetime = 500 -- recommended https://github.com/airblade/vim-gitgutter#when-are-the-signs-updated
+vim.opt.exrc = true
 vim.loader.enable()
 
 -- ########################
--- #	  PLUGIN SETTINGS   #
+-- #    PLUGIN SETTINGS   #
 -- ########################
-
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
 	vim.fn.system({
@@ -40,12 +40,19 @@ end
 vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
 	{
-		"navarasu/onedark.nvim",
+		"olimorris/onedarkpro.nvim",
+		priority = 1000, -- Ensure it loads first
+		lazy = false,
 		config = function()
-			local onedark = require("onedark")
-			onedark.setup({ style = "darker" })
-			onedark.load()
+			require("onedarkpro").setup({
+				colors = {
+					bg = "#1f2329",
+				},
+				highlights = {},
+			})
+			vim.cmd.colorscheme("onedark")
 		end,
+		enabled = true,
 	},
 
 	{
@@ -119,6 +126,7 @@ require("lazy").setup({
 		},
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 	},
+	{ "gabrielpoca/replacer.nvim", enabled = false },
 
 	{
 		"nvim-telescope/telescope.nvim",
@@ -148,8 +156,16 @@ require("lazy").setup({
 			{ "<C-Space>", function() require("telescope.builtin").builtin() end },
 			{ "<leader>lrr", function() require("telescope.builtin").lsp_references() end },
 			{
+				"<leader>ls",
+				function() require("telescope.builtin").lsp_document_symbols() end,
+			},
+			{
+				"<leader>lsw",
+				function() require("telescope.builtin").lsp_workspace_symbols() end,
+			},
+			{
 				"<leader>lsf",
-				function() require("telescope.builtin").lsp_workspace_symbols({ symbols = "function" }) end,
+				function() require("telescope.builtin").lsp_document_symbols({ symbols = "function" }) end,
 			},
 		},
 		config = function()
@@ -174,12 +190,12 @@ require("lazy").setup({
 						},
 						i = { ["<C-q>"] = trouble.open_with_trouble },
 					},
-				},
-				pickers = {
-					buffers = {
-						mappings = {
-							i = {
-								["<C-e>"] = actions.move_selection_next,
+					pickers = {
+						buffers = {
+							mappings = {
+								i = {
+									["<C-e>"] = actions.move_selection_next,
+								},
 							},
 						},
 					},
@@ -196,7 +212,16 @@ require("lazy").setup({
 			{ "<A-1>", function() require("nvim-tree.api").tree.toggle() end },
 			{ "<M-S-!>", function() require("nvim-tree.api").tree.focus() end },
 		},
-		config = true,
+		opts = {
+			on_attach = function(bufnr)
+				local api = require("nvim-tree.api")
+				local function opts(desc)
+					return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+				end
+				api.config.mappings.default_on_attach(bufnr)
+				vim.keymap.set("n", "n", api.fs.create, opts("n"))
+			end,
+		},
 		dependencies = "nvim-tree/nvim-web-devicons",
 	},
 
@@ -207,13 +232,16 @@ require("lazy").setup({
 
 	{
 		"rcarriga/nvim-dap-ui",
-		config = true,
+		init = function() vim.fn.sign_define("DapBreakpoint", { text = "•", texthl = "red", linehl = "", numhl = "" }) end,
+		--[[ vim.fn.sign_define("DapBreakpoint", { text = "🔺", texthl = "", linehl = "", numhl = "" }) end, ]]
 		keys = {
 			{ "<leader>dt", function() require("dapui").toggle() end },
 			{ "<leader>dr", function() require("dapui").open({ reset = true }) end },
 		},
+		config = true,
 		dependencies = {
 			"nvim-neotest/nvim-nio",
+			{ "theHamsta/nvim-dap-virtual-text", opts = { virt_text_pos = "eol" } },
 			{
 				"mfussenegger/nvim-dap",
 				keys = {
@@ -227,9 +255,18 @@ require("lazy").setup({
 			},
 			{
 				"mfussenegger/nvim-dap-python",
-				ft = "python",
 				config = function() require("dap-python").setup("python") end,
 				dependencies = "microsoft/debugpy",
+			},
+			{
+				"mxsdev/nvim-dap-vscode-js",
+				config = true,
+				dependencies = {
+					"microsoft/vscode-js-debug",
+					commit = "7349abcd0aaf72375645a4a876afab6479e0ed7e",
+					config = false,
+					build = "pnpm i && pnpm run compile vsDebugServerBundle && rm -rf out && mv -f dist out",
+				},
 			},
 		},
 	},
@@ -261,7 +298,7 @@ require("lazy").setup({
 			lsp_fallback = false,
 			formatters = {
 				stylua = {
-					prepend_args = { "--collapse-simple-statement", "Always" },
+					prepend_args = { "--collapse-simple-statement", "Always", "--indent-type", "Tabs", "--indent-width", 2 },
 				},
 			},
 			formatters_by_ft = {
@@ -299,6 +336,9 @@ require("lazy").setup({
 		event = "VeryLazy",
 		dependencies = "nvim-tree/nvim-web-devicons",
 		opts = {
+			options = {
+				theme = "onedark",
+			},
 			sections = {
 				lualine_b = {
 					{
@@ -348,7 +388,6 @@ require("lazy").setup({
 		dependencies = "nvim-lua/plenary.nvim",
 		keys = {
 			{ "<leader>gg", function() require("lazygit").lazygit() end },
-			{ "<leader>gb", function() require("lazygit").lazygit(nil, "branch") end },
 		},
 	},
 	{
@@ -424,6 +463,7 @@ require("lazy").setup({
 			"dcampos/cmp-snippy",
 			{
 				"dcampos/nvim-snippy",
+        "honza/vim-snippets",
 				event = "InsertEnter",
 				config = function()
 					require("snippy").setup({
@@ -510,6 +550,7 @@ require("lazy").setup({
 				}, {
 					{ name = "cmdline" },
 				}),
+				---@diagnostic disable-next-line: missing-fields
 				matching = { disallow_symbol_nonprefix_matching = false },
 			})
 		end,
@@ -517,31 +558,29 @@ require("lazy").setup({
 }, { dev = { path = "~/src" } })
 
 -- ############################
--- #			GLOBAL KEYMAPS			#
+-- #      GLOBAL KEYMAPS      #
 -- ############################
 local opts_silent = { noremap = true, silent = true }
 vim.keymap.set("n", "<C-l>", "<CMD>Lazy<CR>", opts_silent)
 vim.keymap.set("n", "<leader>q", "<CMD>q<CR>", opts_silent)
-vim.keymap.set("n", "<leader>iv", "<CMD>vsplit ~/.config/nvim/init.lua<CR>", opts_silent)
-vim.keymap.set("n", "<leader>is", "<CMD>split ~/.config/nvim/init.lua<CR>", opts_silent)
-vim.keymap.set("n", "<leader>it", "<CMD>tabnew ~/.config/nvim/init.lua<CR>", opts_silent)
-vim.keymap.set({ "n", "x" }, "Y", '"+y') -- yank to clipboard
+vim.keymap.set("n", "<leader>ec", "<CMD>vsplit ~/.config/nvim/init.lua<CR>", opts_silent)
 vim.keymap.set("n", "YY", '"+yy') -- yank to clipboard
+vim.keymap.set({ "n", "x" }, "Y", '"+y') -- yank to clipboard
 
 -- LSP keymaps
-vim.keymap.set("n", "<leader>lD", vim.lsp.buf.definition)
 vim.keymap.set("n", "<leader>ld", vim.lsp.buf.definition)
 vim.keymap.set("n", "<leader>li", vim.lsp.buf.implementation)
 vim.keymap.set("n", "<leader>ll", vim.lsp.buf.hover)
 vim.keymap.set("n", "<leader>lR", vim.lsp.buf.rename)
 vim.keymap.set("n", "<leader>la", vim.lsp.buf.code_action)
+vim.keymap.set("n", "<leader><space>", vim.lsp.buf.code_action)
 vim.keymap.set("n", "<C-h>", vim.lsp.buf.hover)
 vim.keymap.set("n", "<C-h-h>", vim.lsp.buf.signature_help)
 vim.keymap.set("n", "<A-Left>", "<C-O>", opts_silent)
 vim.keymap.set("n", "<A-Right>", "<C-I>", opts_silent)
 
 -- ############################
--- #			      LSP           #
+-- #            LSP           #
 -- ############################
 local lspconfig = require("lspconfig")
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
@@ -554,7 +593,7 @@ for _, lsp in pairs({
 	"dockerls",
 	"bashls",
 	"perlpls",
-  "dartls",
+	"dartls",
 }) do
 	lspconfig[lsp].setup({ capabilities = capabilities })
 end
@@ -595,6 +634,12 @@ lspconfig["lua_ls"].setup({
 		},
 	},
 })
+capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+lspconfig["html"].setup {
+  capabilities = capabilities,
+}
+
 -- create statusline indicator when recording a macro
 local lualine = require("lualine")
 vim.api.nvim_create_autocmd("RecordingEnter", {
