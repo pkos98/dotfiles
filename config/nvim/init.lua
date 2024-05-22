@@ -107,10 +107,10 @@ require("lazy").setup({
   {
     "folke/trouble.nvim",
     keys = {
+      { "<leader>qq", function() require("trouble").toggle("quickfix") end },
       { "<leader>xx", function() require("trouble").toggle() end },
       { "<leader>xw", function() require("trouble").toggle("workspace_diagnostics") end },
       { "<leader>xd", function() require("trouble").toggle("document_diagnostics") end },
-      { "<leader>xq", function() require("trouble").toggle("quickfix") end },
       { "<leader>xl", function() require("trouble").toggle("loclist") end },
       { "<leader>lr", function() require("trouble").toggle("lsp_references") end },
       {
@@ -170,8 +170,11 @@ require("lazy").setup({
     },
     config = function()
       local actions = require("telescope.actions")
-      local trouble = require("trouble.providers.telescope")
       local telescope = require("telescope")
+      local function send(prompt_bufnr)
+        actions.smart_send_to_qflist(prompt_bufnr)
+        require("trouble").open("quickfix")
+      end
       telescope.setup({
         extensions = {
           fzf = {
@@ -186,9 +189,9 @@ require("lazy").setup({
             n = {
               ["<Esc>"] = actions.close,
               ["q"] = actions.close,
-              ["<C-q>"] = trouble.open_with_trouble,
+              ["<C-q>"] = send,
             },
-            i = { ["<C-q>"] = trouble.open_with_trouble },
+            i = { ["<C-q>"] = send },
           },
           pickers = {
             buffers = {
@@ -302,10 +305,10 @@ require("lazy").setup({
         },
       },
       formatters_by_ft = {
-        typescript = { "biome-check" },
-        typescriptreact = { "biome-check" },
-        javascriptreact = { "biome-check" },
-        javascript = { "biome-check" },
+        typescript = { "prettier" },
+        typescriptreact = { "prettier" },
+        javascriptreact = { "prettier" },
+        javascript = { "prettier" },
         awk = { "awk" },
         lua = { "stylua" },
         python = { "isort", "black" },
@@ -313,6 +316,10 @@ require("lazy").setup({
         terraform = { "terraform_fmt" },
         bash = { "shfmt" },
         sh = { "shfmt" },
+        html = { "prettier" },
+        css = { "prettier" },
+        json = { "prettier" },
+        yaml = { "prettier" },
       },
     },
   },
@@ -564,6 +571,8 @@ local opts_silent = { noremap = true, silent = true }
 vim.keymap.set("n", "<C-l>", "<CMD>Lazy<CR>", opts_silent)
 vim.keymap.set("n", "<leader>q", "<CMD>q<CR>", opts_silent)
 vim.keymap.set("n", "<leader>ec", "<CMD>vsplit ~/.config/nvim/init.lua<CR>", opts_silent)
+
+vim.keymap.set("n", "<leader>,", "<CMD>write<CR>", opts_silent)
 vim.keymap.set("n", "YY", '"+yy') -- yank to clipboard
 vim.keymap.set({ "n", "x" }, "Y", '"+y') -- yank to clipboard
 
@@ -637,6 +646,9 @@ lspconfig["lua_ls"].setup({
 capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 lspconfig["html"].setup({
+  capabilities = capabilities,
+})
+lspconfig["cssls"].setup({
   capabilities = capabilities,
 })
 
