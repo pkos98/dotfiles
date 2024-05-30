@@ -19,7 +19,7 @@ alias ssh="TERM=xterm-color; ssh"
 alias gpt="chatgpt -i"
 alias chat="chatgpt -i"
 alias grep="grep --color"
-alias vimm="nvim /home/pkos98/.config/nvim/init.lua"
+alias vimm="(cd ~/src/dotfiles/ && nvim ~/.config/nvim/init.lua)"
 alias cdn="cd ~/.config/nvim"
 alias lg=lazygit
 alias nvimdiff="nvim -d"
