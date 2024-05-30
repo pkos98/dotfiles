@@ -46,23 +46,23 @@ require("lazy").setup({
     config = function()
       require("onedarkpro").setup({
         colors = {
+          -- TODO: Set different window border color
           bg = "#1f2329",
         },
-        highlights = {},
       })
       vim.cmd.colorscheme("onedark")
     end,
-    enabled = true,
   },
-
   {
     "folke/neodev.nvim",
+    ft = "lua",
     opts = {
       override = function(_, lib)
         lib.enabled = true
-        lib.plugins = true
+        -- lib.plugins = true
       end,
     },
+    build = "curl -Lo ~/.local/share/nvim/site/api.lua https://raw.githubusercontent.com/neovim/neovim/HEAD/runtime/lua/vim/_meta/api.lua",
   },
   "neovim/nvim-lspconfig",
   {
@@ -108,25 +108,28 @@ require("lazy").setup({
     "folke/trouble.nvim",
     keys = {
       { "<leader>qq", function() require("trouble").toggle("quickfix") end },
-      { "<leader>xx", function() require("trouble").toggle() end },
+      { "<leader>xx", function() require("trouble").toggle("diagnostics") end },
       { "<leader>xw", function() require("trouble").toggle("workspace_diagnostics") end },
       { "<leader>xd", function() require("trouble").toggle("document_diagnostics") end },
       { "<leader>xl", function() require("trouble").toggle("loclist") end },
       { "<leader>lr", function() require("trouble").toggle("lsp_references") end },
       {
         "<C-j>",
-        function() require("trouble").next({ skip_groups = true, jump = true }) end,
+        function()
+          require("trouble").next({ skip_groups = true, jump = true })
+        end,
         mode = { "i", "n" },
       },
       {
         "<C-k>",
-        function() require("trouble").previous({ skip_groups = true, jump = true }) end,
+        function()
+          require("trouble").prev({ skip_groups = true, jump = true })
+        end,
         mode = { "i", "n" },
       },
     },
     dependencies = { "nvim-tree/nvim-web-devicons" },
   },
-  { "gabrielpoca/replacer.nvim", enabled = false },
 
   {
     "nvim-telescope/telescope.nvim",
@@ -193,18 +196,10 @@ require("lazy").setup({
             },
             i = { ["<C-q>"] = send },
           },
-          pickers = {
-            buffers = {
-              mappings = {
-                i = {
-                  ["<C-e>"] = actions.move_selection_next,
-                },
-              },
-            },
-          },
         },
       })
       telescope.load_extension("fzf")
+      -- telescope.load_extension("grapple")
     end,
   },
 
@@ -213,6 +208,7 @@ require("lazy").setup({
     cmd = { "NvimTreeToggle", "NvimTreeFocus" },
     keys = {
       { "<A-1>", function() require("nvim-tree.api").tree.toggle() end },
+      { "<A-S-1>", function() require("nvim-tree.api").open() end },
       { "<M-S-!>", function() require("nvim-tree.api").tree.focus() end },
     },
     opts = {
@@ -226,11 +222,6 @@ require("lazy").setup({
       end,
     },
     dependencies = "nvim-tree/nvim-web-devicons",
-  },
-
-  {
-    "folke/which-key.nvim",
-    keys = { { "<leader>wk", "<CMD>WhichKey<CR>" } },
   },
 
   {
@@ -320,6 +311,7 @@ require("lazy").setup({
         css = { "prettier" },
         json = { "prettier" },
         yaml = { "prettier" },
+        swift = { "swiftformat" },
       },
     },
   },
@@ -369,7 +361,6 @@ require("lazy").setup({
     event = "VeryLazy",
     keys = {
       { "<leader>gp", function() require("gitsigns").preview_hunk() end },
-      { "<leader>gc", function() require("gitsigns").toggle_current_line_blame() end },
     },
     opts = {
       current_line_blame_opts = {
@@ -386,7 +377,6 @@ require("lazy").setup({
     dev = true,
     cmd = {
       "LazyGit",
-      "LazyGitBranch",
       "LazyGitConfig",
       "LazyGitCurrentFile",
       "LazyGitFilter",
@@ -399,11 +389,29 @@ require("lazy").setup({
   },
   {
     "FabijanZulj/blame.nvim",
-    keys = { { "<leader>gB", "<CMD>BlameToggle<CR>", silent = true } },
+    keys = { { "<leader>gb", "<CMD>BlameToggle<CR>", silent = true } },
     opts = { commit_detail_view = "split" },
   },
   {
-    "kevinhwang91/nvim-ufo",
+    "sindrets/diffview.nvim",
+    keys = {
+      { "<leader>gd", "<CMD>DiffviewOpen<CR>", silent = true },
+      { "<leader>gl", "<CMD>DiffviewOpen<CR>", silent = true },
+      { "<leader>glb", "<CMD>DiffviewFileHistory<CR>", silent = true },
+      { "<leader>glf", "<CMD>DiffviewFileHistory %<CR>", silent = true },
+    },
+    cmd = {
+      "DiffviewFileHistory",
+      "DiffviewOpen",
+      "DiffviewClose",
+      "DiffviewFocusFiles",
+      "DiddviewRefresh",
+    },
+    config = true,
+  },
+
+  {
+    "kevinhwang91/nvim-ufo", -- Folding
     dependencies = "kevinhwang91/promise-async",
     keys = { -- TODO: fix error on first invocation
       { "<C-S-+>", "<CMD>silent! foldopen<CR>", silent = true },
@@ -448,12 +456,64 @@ require("lazy").setup({
       end,
     },
   },
+
   {
     "pmizio/typescript-tools.nvim",
     dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
     ft = { "typescript", "typescriptreact", "javascriptreact", "javascript" },
     config = true,
   },
+
+  {
+    "brenoprata10/nvim-highlight-colors",
+    config = true,
+    ft = { "html", "css", "typescript", "javascript", "typescriptreact", "javascriptreact" },
+  },
+
+  {
+    "MagicDuck/grug-far.nvim",
+    config = true,
+    cmd = { "GrugFar" },
+  },
+
+  {
+    "LintaoAmons/bookmarks.nvim",
+    dependencies = {
+      -- { "nvim-telescope/telescope.nvim", lazy = true },
+      -- { "stevearc/dressing.nvim" }, -- optional: to have the same UI shown in the GIF
+    },
+    event = "VeryLazy",
+    dev = true,
+    keys = {
+      { "<leader>mm", function() require("bookmarks.api").mark({ name = nil }) end },
+      {
+        "<leader>m",
+        function()
+          local api, picker = require("bookmarks.api"), require("bookmarks.adapter.picker")
+          picker.pick_bookmark(
+            function(bookmark) api.goto_bookmark(bookmark, { open_method = "vsplit" }) end,
+            { all = false }
+          )
+        end,
+      },
+    },
+    config = function()
+      require("bookmarks").setup({})
+      local api, cwd = require("bookmarks.api"), vim.fn.getcwd()
+      -- set active list to cwd and create if not existing
+      local exists = false
+      -- TODO: use vim.tbl_map
+      for _, list in ipairs(require("bookmarks.repo").bookmark_list.read.find_all()) do
+        if list.name == cwd then exists = true end
+      end
+      if not exists then
+        api.add_list({ name = cwd })
+      else
+        api.set_active_list(cwd)
+      end
+    end,
+  },
+
   {
     "hrsh7th/nvim-cmp",
     event = { "InsertEnter", "CmdlineEnter" },
@@ -571,7 +631,6 @@ local opts_silent = { noremap = true, silent = true }
 vim.keymap.set("n", "<C-l>", "<CMD>Lazy<CR>", opts_silent)
 vim.keymap.set("n", "<leader>q", "<CMD>q<CR>", opts_silent)
 vim.keymap.set("n", "<leader>ec", "<CMD>vsplit ~/.config/nvim/init.lua<CR>", opts_silent)
-
 vim.keymap.set("n", "<leader>,", "<CMD>write<CR>", opts_silent)
 vim.keymap.set("n", "YY", '"+yy') -- yank to clipboard
 vim.keymap.set({ "n", "x" }, "Y", '"+y') -- yank to clipboard
@@ -603,6 +662,7 @@ for _, lsp in pairs({
   "bashls",
   "perlpls",
   "dartls",
+  "sourcekit",
 }) do
   lspconfig[lsp].setup({ capabilities = capabilities })
 end
@@ -616,7 +676,7 @@ lspconfig["pylsp"].setup({
   },
 })
 lspconfig.elixirls.setup({ capabilities = capabilities, cmd = { "/usr/bin/elixir-ls" } })
-lspconfig["lua_ls"].setup({
+lspconfig.lua_ls.setup({
   capabilities = capabilities,
   settings = {
     Lua = {
@@ -628,7 +688,11 @@ lspconfig["lua_ls"].setup({
       },
       workspace = {
         -- library = vim.api.nvim_get_runtime_file("", true),
-        library = { require("neodev.config").types() },
+        library = {
+          "/home/pkos98/.local/share/nvim/lazy/neodev.nvim/types/nightly",
+          "/home/pkos98/.config/nvim",
+          "/home/pkos98/.local/share/nvim/site",
+        },
         checkThirdParty = false,
       },
       telemetry = {
@@ -643,7 +707,7 @@ lspconfig["lua_ls"].setup({
     },
   },
 })
-capabilities = vim.lsp.protocol.make_client_capabilities()
+vim.capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 lspconfig["html"].setup({
   capabilities = capabilities,
@@ -651,6 +715,10 @@ lspconfig["html"].setup({
 lspconfig["cssls"].setup({
   capabilities = capabilities,
 })
+vim.api.nvim_create_user_command("LuaLsLoadPlugins", function(_)
+  require("lspconfig").lua_ls.manager.config.settings.Lua.workspace.library = vim.api.nvim_get_runtime_file("", true)
+  vim.cmd("LspRestart lua_ls")
+end, {})
 
 -- create statusline indicator when recording a macro
 local lualine = require("lualine")
