@@ -6,7 +6,6 @@ vim.opt.grepprg = "rg --vimgrep --smart-case"
 vim.opt.grepformat = "%f:%l:%c:%m"
 vim.o.number = true
 vim.o.mouse = "a"
-vim.o.termguicolors = true
 vim.o.smartindent = true
 vim.o.shiftwidth = 2
 vim.o.tabstop = 2
@@ -20,6 +19,7 @@ vim.o.splitbelow = true
 vim.o.splitright = true
 vim.o.cmdheight = 0
 vim.g.updatetime = 500 -- recommended https://github.com/airblade/vim-gitgutter#when-are-the-signs-updated
+vim.g.python3_host_prog = "python" -- improve startuptime in presence of venv (avoids lookup)
 vim.opt.exrc = true
 vim.loader.enable()
 
@@ -39,30 +39,36 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
+  -- Base plugins
   {
     "olimorris/onedarkpro.nvim",
     priority = 1000, -- Ensure it loads first
     lazy = false,
+    pin = true,
     config = function()
       require("onedarkpro").setup({
+        options = {
+          highlight_inactive_windows = true,
+        },
         colors = {
-          -- TODO: Set different window border color
           bg = "#1f2329",
+          color_column = "red",
+        },
+        highlights = {
+          MatchParen = {
+            bg = "grey",
+          },
         },
       })
       vim.cmd.colorscheme("onedark")
     end,
   },
   {
-    "folke/neodev.nvim",
-    ft = "lua",
+    "folke/lazydev.nvim",
+    ft = "lua", -- only load on lua files
     opts = {
-      override = function(_, lib)
-        lib.enabled = true
-        -- lib.plugins = true
-      end,
+      enabled = true,
     },
-    build = "curl -Lo ~/.local/share/nvim/site/api.lua https://raw.githubusercontent.com/neovim/neovim/HEAD/runtime/lua/vim/_meta/api.lua",
   },
   "neovim/nvim-lspconfig",
   {
@@ -104,45 +110,55 @@ require("lazy").setup({
     end,
   },
 
+  -- UI plugins
   {
     "folke/trouble.nvim",
+    cmd = { "Trouble" },
     keys = {
       { "<leader>qq", function() require("trouble").toggle("quickfix") end },
+      { "<leader>xq", function() require("trouble").toggle("quickfix") end },
       { "<leader>xx", function() require("trouble").toggle("diagnostics") end },
+      { "<leader>xt", function() require("trouble").toggle("diagnostics") end },
       { "<leader>xw", function() require("trouble").toggle("workspace_diagnostics") end },
       { "<leader>xd", function() require("trouble").toggle("document_diagnostics") end },
       { "<leader>xl", function() require("trouble").toggle("loclist") end },
       { "<leader>lr", function() require("trouble").toggle("lsp_references") end },
       {
         "<C-j>",
-        function()
-          require("trouble").next({ skip_groups = true, jump = true })
-        end,
+        ---@diagnostic disable-next-line: missing-parameter, missing-fields
+        function() require("trouble").next({ skip_groups = true, jump = true }) end,
         mode = { "i", "n" },
       },
       {
         "<C-k>",
-        function()
-          require("trouble").prev({ skip_groups = true, jump = true })
-        end,
+        ---@diagnostic disable-next-line: missing-parameter, missing-fields
+        function() require("trouble").prev({ skip_groups = true, jump = true }) end,
         mode = { "i", "n" },
       },
     },
     dependencies = { "nvim-tree/nvim-web-devicons" },
   },
-
   {
     "nvim-telescope/telescope.nvim",
     version = "0.1.4",
     dependencies = {
       "nvim-lua/plenary.nvim",
+      "nvim-telescope/telescope-live-grep-args.nvim", -- supports grep args in search
+      "nvim-telescope/telescope-file-browser.nvim", -- for selecting files outside of cwd
       {
-        "nvim-telescope/telescope-fzf-native.nvim",
+        "nvim-telescope/telescope-fzf-native.nvim", -- recommended for better performance
         build = "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build",
       },
     },
     keys = {
-      { "<C-n>", function() require("telescope.builtin").find_files() end },
+      {
+        "<C-n>",
+        function() require("telescope.builtin").find_files() end,
+      },
+      {
+        "<C-S-n>",
+        function() require("telescope").extensions.file_browser.file_browser({ path = "~" }) end,
+      },
       { "<C-e>", function() require("telescope.builtin").buffers() end },
       {
         "<C-f>",
@@ -151,15 +167,15 @@ require("lazy").setup({
           local search_text = vim.fn.getreg("v")
           vim.fn.setreg("v", {})
           search_text = string.gsub(search_text, "\n", "")
-          require("telescope.builtin").live_grep({ default_text = search_text })
+          require("telescope").extensions.live_grep_args.live_grep_args({ default_text = search_text })
         end,
         mode = { "n", "x", "i" },
       },
-      { "<C-S-F>", function() require("telescope.builtin").live_grep() end },
+      { "<C-S-F>", function() vim.fn.feedkeys(vim.api.nvim_replace_termcodes("<C-f>", false, false, true)) end },
       { "<C-Space>", function() require("telescope.builtin").builtin() end },
       { "<leader>lrr", function() require("telescope.builtin").lsp_references() end },
       {
-        "<leader>ls",
+        "<leader>lsd",
         function() require("telescope.builtin").lsp_document_symbols() end,
       },
       {
@@ -170,13 +186,30 @@ require("lazy").setup({
         "<leader>lsf",
         function() require("telescope.builtin").lsp_document_symbols({ symbols = "function" }) end,
       },
+      { "<C-b>", function() require("telescope.builtin").git_branches() end },
+      {
+        "<C-c>", -- file history
+        function()
+          require("telescope.builtin").git_commits({
+            git_command = {
+              "git",
+              "log",
+              "--pretty=oneline",
+              "--abbrev-commit",
+              "--",
+              vim.fn.expand("%"),
+            },
+          })
+        end,
+      },
+      { "<M-C-C>", function() require("telescope.builtin").git_commits() end },
     },
     config = function()
       local actions = require("telescope.actions")
       local telescope = require("telescope")
       local function send(prompt_bufnr)
         actions.smart_send_to_qflist(prompt_bufnr)
-        require("trouble").open("quickfix")
+        require("trouble").open("qflist")
       end
       telescope.setup({
         extensions = {
@@ -186,6 +219,20 @@ require("lazy").setup({
             override_file_sorter = true, -- override the file sorter
             case_mode = "smart_case", -- default or "ignore_case" or "respect_case"
           },
+          live_grep_args = {
+            theme = "ivy",
+          },
+          file_browser = {
+            theme = "ivy",
+            hijack_netrw = true, -- disables netrw and use telescope-file-browser in its place
+            display_stat = false,
+            -- previewer = false, TODO: customize to replace nvim-tree
+            -- layout_config = {
+            --   anchor = "NW",
+            --   height = 100,
+            --   width = 0.25,
+            -- },
+          },
         },
         defaults = {
           mappings = {
@@ -193,18 +240,51 @@ require("lazy").setup({
               ["<Esc>"] = actions.close,
               ["q"] = actions.close,
               ["<C-q>"] = send,
+              ["<S-j>"] = function(bufnr)
+                require("telescope.state").get_status(bufnr).picker.layout_config.scroll_speed = 1
+                return require("telescope.actions").preview_scrolling_down(bufnr)
+              end,
+              ["<S-k>"] = function(bufnr)
+                require("telescope.state").get_status(bufnr).picker.layout_config.scroll_speed = 1
+                return require("telescope.actions").preview_scrolling_up(bufnr)
+              end,
             },
-            i = { ["<C-q>"] = send },
+            i = {
+              ["<C-q>"] = send,
+            },
+          },
+        },
+        pickers = {
+          find_files = {
+            theme = "ivy",
+          },
+          buffers = {
+            theme = "ivy",
+          },
+          builtin = {
+            theme = "ivy",
+          },
+          lsp_document_symbols = {
+            theme = "ivy",
+          },
+          lsp_workspace_symbols = {
+            theme = "ivy",
+          },
+          git_branches = {
+            theme = "ivy",
+          },
+          git_commits = {
+            theme = "ivy",
           },
         },
       })
       telescope.load_extension("fzf")
-      -- telescope.load_extension("grapple")
+      telescope.load_extension("live_grep_args")
+      telescope.load_extension("file_browser")
     end,
   },
-
   {
-    "nvim-tree/nvim-tree.lua",
+    "nvim-tree/nvim-tree.lua", -- TODO: Replace with telescope file_browser with side layout
     cmd = { "NvimTreeToggle", "NvimTreeFocus" },
     keys = {
       { "<A-1>", function() require("nvim-tree.api").tree.toggle() end },
@@ -223,11 +303,8 @@ require("lazy").setup({
     },
     dependencies = "nvim-tree/nvim-web-devicons",
   },
-
   {
     "rcarriga/nvim-dap-ui",
-    init = function() vim.fn.sign_define("DapBreakpoint", { text = "•", texthl = "red", linehl = "", numhl = "" }) end,
-    --[[ vim.fn.sign_define("DapBreakpoint", { text = "🔺", texthl = "", linehl = "", numhl = "" }) end, ]]
     keys = {
       { "<leader>dt", function() require("dapui").toggle() end },
       { "<leader>dr", function() require("dapui").open({ reset = true }) end },
@@ -264,21 +341,197 @@ require("lazy").setup({
       },
     },
   },
-
   {
     "stevearc/dressing.nvim", -- enhanced UI for e.g. refactoring
     event = "VeryLazy",
+    opts = {
+      input = {
+        enabled = false,
+      },
+    },
+  },
+  {
+    "brenoprata10/nvim-highlight-colors",
+    config = true,
+    ft = { "html", "css", "typescript", "javascript", "typescriptreact", "javascriptreact", "lua" },
+  },
+  {
+    "MagicDuck/grug-far.nvim",
+    config = true,
+    cmd = "GrugFar",
+  },
+  {
+    "nvim-lualine/lualine.nvim",
+    event = "VeryLazy",
+    dependencies = "nvim-tree/nvim-web-devicons",
+    config = function()
+      local theme = require("lualine.themes.onedark")
+      theme.normal.a.bg = "#645394"
+      theme.normal.b.fg = theme.normal.c.fg
+      theme.inactive.c.fg = "grey"
+      theme.inactive.c.gui = "underline"
+      require("lualine").setup({
+        options = {
+          theme = theme,
+        },
+        sections = {
+          lualine_b = {
+            {
+              "macro-recording",
+              fmt = function()
+                local recording_register = vim.fn.reg_recording()
+                if recording_register == "" then
+                  return ""
+                else
+                  return "Recording @" .. recording_register
+                end
+              end,
+            },
+          },
+        },
+      })
+    end,
   },
 
+  -- Git plugins
+  {
+    "lewis6991/gitsigns.nvim",
+    event = "VeryLazy",
+    keys = {
+      { "<leader>gp", function() require("gitsigns").preview_hunk() end },
+      { "<leader>gs", function() require("gitsigns").stage_hunk() end },
+      {
+        "<leader>gs",
+        function() require("gitsigns").stage_hunk({ vim.fn.line("."), vim.fn.line("v") }) end,
+        mode = "x",
+      },
+      {
+        "<leader>ga",
+        function()
+          local actions = require("gitsigns").get_actions()
+          actions["repo_logs"] = function() vim.cmd("DiffviewFileHistory") end
+          actions["file_logs"] = function() vim.cmd("DiffviewFileHistory %") end
+          vim.ui.select(vim.tbl_keys(actions), {
+            prompt = "Git actions",
+          }, function(selected)
+            if selected ~= nil then actions[selected]() end
+          end)
+        end,
+      },
+    },
+    opts = {
+      current_line_blame_opts = {
+        virt_text = true,
+        virt_text_pos = "eol",
+        delay = 0,
+        ignore_whitespace = false,
+        virt_text_priority = 100,
+      },
+    },
+  },
+  {
+    "kdheepak/lazygit.nvim",
+    dev = true,
+    cmd = {
+      "LazyGit",
+      "LazyGitConfig",
+      "LazyGitCurrentFile",
+      "LazyGitFilter",
+      "LazyGitFilterCurrentFile",
+    },
+    dependencies = "nvim-lua/plenary.nvim",
+    keys = {
+      { "<leader>gg", function() require("lazygit").lazygit() end },
+    },
+  },
+  {
+    "FabijanZulj/blame.nvim",
+    keys = {
+      { "<leader>gb", "<CMD>BlameToggle<CR>", silent = true },
+    },
+    opts = { commit_detail_view = "split" },
+  },
+  {
+    "sindrets/diffview.nvim",
+    keys = {
+      { "<A-0>", "<CMD>DiffviewOpen<CR>", silent = true },
+      { "<leader>gh", "<CMD>DiffviewFileHistory<CR>", silent = true },
+      { "<leader>ghh", "<CMD>DiffviewFileHistory %<CR>", silent = true },
+    },
+    cmd = {
+      "DiffviewFileHistory",
+      "DiffviewOpen",
+      "DiffviewClose",
+      "DiffviewFocusFiles",
+      "DiffviewRefresh",
+    },
+    config = true,
+  },
+
+  -- Other plugins
+  {
+    "kevinhwang91/nvim-ufo",
+    dependencies = "kevinhwang91/promise-async",
+    event = "BufReadPost", -- needed
+    -- won't be loaded on shortcut, but on event
+    keys = { -- TODO: fix error on first lazy invocation
+      { "<C-+>", "<CMD>silent! foldopen<CR>", silent = true },
+      { "<C-*>", "<CMD>silent! foldopen<CR>", silent = true },
+      { "<C-=>", "<CMD>silent! foldopen<CR>", silent = true },
+      { "<C-_>", "<CMD>silent! foldclose<CR>", silent = true },
+      { "<C-->", "<CMD>silent! foldclose<CR>", silent = true },
+      { "<leader>up", function() require("ufo.preview"):peekFoldedLinesUnderCursor() end },
+    },
+    init = function()
+      vim.o.foldcolumn = "0" -- '0' is not bad
+      vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
+      vim.o.foldlevelstart = 99
+      vim.o.foldenable = true
+    end,
+    config = function()
+      ---@diagnostic disable-next-line: missing-fields
+      require("ufo").setup({
+        provider_selector = function(_, _, _) return { "treesitter", "indent" } end,
+        fold_virt_text_handler = function(virtText, lnum, endLnum, width, truncate)
+          local newVirtText = {}
+          local suffix = (" 󰁂 %d "):format(endLnum - lnum)
+          local sufWidth = vim.fn.strdisplaywidth(suffix)
+          local targetWidth = width - sufWidth
+          local curWidth = 0
+          for _, chunk in ipairs(virtText) do
+            local chunkText = chunk[1]
+            local chunkWidth = vim.fn.strdisplaywidth(chunkText)
+            if targetWidth > curWidth + chunkWidth then
+              table.insert(newVirtText, chunk)
+            else
+              chunkText = truncate(chunkText, targetWidth - curWidth)
+              local hlGroup = chunk[2]
+              table.insert(newVirtText, { chunkText, hlGroup })
+              chunkWidth = vim.fn.strdisplaywidth(chunkText)
+              if curWidth + chunkWidth < targetWidth then
+                suffix = suffix .. (" "):rep(targetWidth - curWidth - chunkWidth)
+              end
+              break
+            end
+            curWidth = curWidth + chunkWidth
+          end
+          table.insert(newVirtText, { suffix, "MoreMsg" })
+          return newVirtText
+        end,
+      })
+    end,
+  },
   {
     "numToStr/Comment.nvim",
     config = true,
     keys = {
       { "<C-/>", "<Plug>(comment_toggle_linewise_current)", mode = "n" },
+      { "<C-7>", "<Plug>(comment_toggle_linewise_current)", mode = "n" },
       { "<C-S-/>", "<Plug>(comment_toggle_linewise_current)", mode = "n" },
       { "<C-\\>", "<Plug>(comment_toggle_blockwise_current)", mode = "n" },
       { "<C-S-?>", "<Plug>(comment_toggle_blockwise_current", mode = "n" },
       { "<C-/>", "<Plug>(comment_toggle_linewise_visual)", mode = "x" },
+      { "<C-7>", "<Plug>(comment_toggle_linewise_visual)", mode = "x" },
       { "<C-S-/>", "<Plug>(comment_toggle_linewise_visual)", mode = "x" },
       { "<C-\\>", "<Plug>(comment_toggle_blockwise_visual)", mode = "x" },
       { "<C-S-?>", "<Plug>(comment_toggle_blockwise_visual)", mode = "x" },
@@ -315,179 +568,28 @@ require("lazy").setup({
       },
     },
   },
-
-  {
-    "jackMort/ChatGPT.nvim",
-    event = "InsertEnter",
-    opts = { api_host_cmd = "echo http://127.0.0.1:4000" },
-    dependencies = {
-      "MunifTanjim/nui.nvim",
-      "nvim-lua/plenary.nvim",
-      "folke/trouble.nvim",
-      "nvim-telescope/telescope.nvim",
-    },
-  },
-
-  { "grapp-dev/nui-components.nvim", dependencies = "MunifTanjim/nui.nvim" },
-
-  {
-    "nvim-lualine/lualine.nvim",
-    event = "VeryLazy",
-    dependencies = "nvim-tree/nvim-web-devicons",
-    opts = {
-      options = {
-        theme = "onedark",
-      },
-      sections = {
-        lualine_b = {
-          {
-            "macro-recording",
-            fmt = function()
-              local recording_register = vim.fn.reg_recording()
-              if recording_register == "" then
-                return ""
-              else
-                return "Recording @" .. recording_register
-              end
-            end,
-          },
-        },
-      },
-    },
-  },
-
-  {
-    "lewis6991/gitsigns.nvim",
-    event = "VeryLazy",
-    keys = {
-      { "<leader>gp", function() require("gitsigns").preview_hunk() end },
-    },
-    opts = {
-      current_line_blame_opts = {
-        virt_text = true,
-        virt_text_pos = "eol",
-        delay = 0,
-        ignore_whitespace = false,
-        virt_text_priority = 100,
-      },
-    },
-  },
-  {
-    "kdheepak/lazygit.nvim",
-    dev = true,
-    cmd = {
-      "LazyGit",
-      "LazyGitConfig",
-      "LazyGitCurrentFile",
-      "LazyGitFilter",
-      "LazyGitFilterCurrentFile",
-    },
-    dependencies = "nvim-lua/plenary.nvim",
-    keys = {
-      { "<leader>gg", function() require("lazygit").lazygit() end },
-    },
-  },
-  {
-    "FabijanZulj/blame.nvim",
-    keys = { { "<leader>gb", "<CMD>BlameToggle<CR>", silent = true } },
-    opts = { commit_detail_view = "split" },
-  },
-  {
-    "sindrets/diffview.nvim",
-    keys = {
-      { "<leader>gd", "<CMD>DiffviewOpen<CR>", silent = true },
-      { "<leader>gl", "<CMD>DiffviewOpen<CR>", silent = true },
-      { "<leader>glb", "<CMD>DiffviewFileHistory<CR>", silent = true },
-      { "<leader>glf", "<CMD>DiffviewFileHistory %<CR>", silent = true },
-    },
-    cmd = {
-      "DiffviewFileHistory",
-      "DiffviewOpen",
-      "DiffviewClose",
-      "DiffviewFocusFiles",
-      "DiddviewRefresh",
-    },
-    config = true,
-  },
-
-  {
-    "kevinhwang91/nvim-ufo", -- Folding
-    dependencies = "kevinhwang91/promise-async",
-    keys = { -- TODO: fix error on first invocation
-      { "<C-S-+>", "<CMD>silent! foldopen<CR>", silent = true },
-      { "<C-S-*>", "<CMD>silent! foldopen<CR>", silent = true },
-      { "<C-S-_>", "<CMD>silent! foldclose<CR>", silent = true },
-      { "<leader>up", function() require("ufo.preview"):peekFoldedLinesUnderCursor() end },
-    },
-    init = function()
-      vim.o.foldcolumn = "0" -- '0' is not bad
-      vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
-      vim.o.foldlevelstart = 99
-      vim.o.foldenable = true
-    end,
-    opts = {
-      provider_selector = function(_, _, _) return { "treesitter", "indent" } end,
-      fold_virt_text_handler = function(virtText, lnum, endLnum, width, truncate)
-        local newVirtText = {}
-        local suffix = (" 󰁂 %d "):format(endLnum - lnum)
-        local sufWidth = vim.fn.strdisplaywidth(suffix)
-        local targetWidth = width - sufWidth
-        local curWidth = 0
-        for _, chunk in ipairs(virtText) do
-          local chunkText = chunk[1]
-          local chunkWidth = vim.fn.strdisplaywidth(chunkText)
-          if targetWidth > curWidth + chunkWidth then
-            table.insert(newVirtText, chunk)
-          else
-            chunkText = truncate(chunkText, targetWidth - curWidth)
-            local hlGroup = chunk[2]
-            table.insert(newVirtText, { chunkText, hlGroup })
-            chunkWidth = vim.fn.strdisplaywidth(chunkText)
-            -- str width returned from truncate() may less than 2nd argument, need padding
-            if curWidth + chunkWidth < targetWidth then
-              suffix = suffix .. (" "):rep(targetWidth - curWidth - chunkWidth)
-            end
-            break
-          end
-          curWidth = curWidth + chunkWidth
-        end
-        table.insert(newVirtText, { suffix, "MoreMsg" })
-        return newVirtText
-      end,
-    },
-  },
-
   {
     "pmizio/typescript-tools.nvim",
     dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
     ft = { "typescript", "typescriptreact", "javascriptreact", "javascript" },
     config = true,
+    enabled = false,
   },
-
-  {
-    "brenoprata10/nvim-highlight-colors",
-    config = true,
-    ft = { "html", "css", "typescript", "javascript", "typescriptreact", "javascriptreact" },
-  },
-
-  {
-    "MagicDuck/grug-far.nvim",
-    config = true,
-    cmd = { "GrugFar" },
-  },
-
   {
     "LintaoAmons/bookmarks.nvim",
-    dependencies = {
-      -- { "nvim-telescope/telescope.nvim", lazy = true },
-      -- { "stevearc/dressing.nvim" }, -- optional: to have the same UI shown in the GIF
-    },
-    event = "VeryLazy",
-    dev = true,
+    dependencies = "nvim-telescope/telescope.nvim",
+    enabled = true,
     keys = {
-      { "<leader>mm", function() require("bookmarks.api").mark({ name = nil }) end },
+      { "<leader>m", function() require("bookmarks.api").mark({ name = "" }) end },
       {
-        "<leader>m",
+        "<leader>M",
+        function()
+          local name = vim.fn.input("Bookmark name: ")
+          require("bookmarks.api").mark({ name = name })
+        end,
+      },
+      {
+        "<S-CR>",
         function()
           local api, picker = require("bookmarks.api"), require("bookmarks.adapter.picker")
           picker.pick_bookmark(
@@ -501,19 +603,13 @@ require("lazy").setup({
       require("bookmarks").setup({})
       local api, cwd = require("bookmarks.api"), vim.fn.getcwd()
       -- set active list to cwd and create if not existing
-      local exists = false
-      -- TODO: use vim.tbl_map
-      for _, list in ipairs(require("bookmarks.repo").bookmark_list.read.find_all()) do
-        if list.name == cwd then exists = true end
-      end
-      if not exists then
-        api.add_list({ name = cwd })
-      else
-        api.set_active_list(cwd)
-      end
+      local exists = vim
+        .iter(require("bookmarks.repo").bookmark_list.read.find_all())
+        :any(function(list) return list.name == cwd end)
+      api.set_active_list(cwd)
+      if not exists then api.add_list({ name = cwd }) end
     end,
   },
-
   {
     "hrsh7th/nvim-cmp",
     event = { "InsertEnter", "CmdlineEnter" },
@@ -521,31 +617,11 @@ require("lazy").setup({
       "neovim/nvim-lspconfig",
       "onsails/lspkind.nvim", -- fancy icons
       "hrsh7th/cmp-nvim-lsp",
-      "hrsh7th/cmp-buffer",
+      -- "hrsh7th/cmp-buffer",
       "hrsh7th/cmp-path",
       "hrsh7th/cmp-cmdline",
       "hrsh7th/cmp-calc",
-      -- "hrsh7th/cmp-nvim-lua",
       "hrsh7th/cmp-nvim-lsp-signature-help",
-      "dcampos/cmp-snippy",
-      {
-        "dcampos/nvim-snippy",
-        "honza/vim-snippets",
-        event = "InsertEnter",
-        config = function()
-          require("snippy").setup({
-            mappings = {
-              is = {
-                ["<Tab>"] = "expand_or_advance",
-                ["<S-Tab>"] = "previous",
-              },
-              nx = {
-                ["<leader>x"] = "cut_text",
-              },
-            },
-          })
-        end,
-      },
     },
     config = function()
       local cmp = require("cmp")
@@ -555,7 +631,7 @@ require("lazy").setup({
           ghost_text = true,
         },
         snippet = {
-          expand = function(args) require("snippy").expand_snippet(args.body) end,
+          expand = function(args) vim.snippet.expand(args.body) end,
         },
         window = {
           documentation = cmp.config.window.bordered(),
@@ -573,23 +649,21 @@ require("lazy").setup({
               path = "path",
               treesitter = "TS",
               calc = "calc",
-              luasnip = "✂",
             },
           }),
         },
         mapping = cmp.mapping.preset.insert({
-          ["<C-b>"] = cmp.mapping.scroll_docs(-4),
-          ["<C-f>"] = cmp.mapping.scroll_docs(4),
+          ["<S-k>"] = cmp.mapping.scroll_docs(-4),
+          ["<S-j>"] = cmp.mapping.scroll_docs(4),
           ["<C-Space>"] = cmp.mapping.complete(),
-          ["<C-e>"] = cmp.mapping.abort(),
+          ["<C-c>"] = cmp.mapping.abort(),
           ["<CR>"] = cmp.mapping.confirm({ select = true }),
           ["<Tab>"] = cmp.mapping.select_next_item({ behavior = types.cmp.SelectBehavior.Select }),
           ["<S-Tab>"] = cmp.mapping.select_prev_item({ behavior = types.cmp.SelectBehavior.Select }),
         }),
         sources = cmp.config.sources({
           { name = "nvim_lsp" },
-          -- { name = "nvim_lua" },
-          { name = "snippy" },
+          { name = "nvim_lua" },
           { name = "path" },
           { name = "nvim_lsp_signature_help" },
           { name = "calc" },
@@ -632,6 +706,7 @@ vim.keymap.set("n", "<C-l>", "<CMD>Lazy<CR>", opts_silent)
 vim.keymap.set("n", "<leader>q", "<CMD>q<CR>", opts_silent)
 vim.keymap.set("n", "<leader>ec", "<CMD>vsplit ~/.config/nvim/init.lua<CR>", opts_silent)
 vim.keymap.set("n", "<leader>,", "<CMD>write<CR>", opts_silent)
+vim.keymap.set("n", "<leader>.", "<CMD>q<CR>", opts_silent)
 vim.keymap.set("n", "YY", '"+yy') -- yank to clipboard
 vim.keymap.set({ "n", "x" }, "Y", '"+y') -- yank to clipboard
 
@@ -641,7 +716,6 @@ vim.keymap.set("n", "<leader>li", vim.lsp.buf.implementation)
 vim.keymap.set("n", "<leader>ll", vim.lsp.buf.hover)
 vim.keymap.set("n", "<leader>lR", vim.lsp.buf.rename)
 vim.keymap.set("n", "<leader>la", vim.lsp.buf.code_action)
-vim.keymap.set("n", "<leader><space>", vim.lsp.buf.code_action)
 vim.keymap.set("n", "<C-h>", vim.lsp.buf.hover)
 vim.keymap.set("n", "<C-h-h>", vim.lsp.buf.signature_help)
 vim.keymap.set("n", "<A-Left>", "<C-O>", opts_silent)
@@ -650,6 +724,9 @@ vim.keymap.set("n", "<A-Right>", "<C-I>", opts_silent)
 -- ############################
 -- #            LSP           #
 -- ############################
+vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
+  border = "single",
+})
 local lspconfig = require("lspconfig")
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 for _, lsp in pairs({
@@ -663,6 +740,7 @@ for _, lsp in pairs({
   "perlpls",
   "dartls",
   "sourcekit",
+  "lua_ls",
 }) do
   lspconfig[lsp].setup({ capabilities = capabilities })
 end
@@ -676,37 +754,6 @@ lspconfig["pylsp"].setup({
   },
 })
 lspconfig.elixirls.setup({ capabilities = capabilities, cmd = { "/usr/bin/elixir-ls" } })
-lspconfig.lua_ls.setup({
-  capabilities = capabilities,
-  settings = {
-    Lua = {
-      runtime = {
-        version = "LuaJIT",
-      },
-      diagnostics = {
-        globals = { "vim" },
-      },
-      workspace = {
-        -- library = vim.api.nvim_get_runtime_file("", true),
-        library = {
-          "/home/pkos98/.local/share/nvim/lazy/neodev.nvim/types/nightly",
-          "/home/pkos98/.config/nvim",
-          "/home/pkos98/.local/share/nvim/site",
-        },
-        checkThirdParty = false,
-      },
-      telemetry = {
-        enable = false,
-      },
-      hint = {
-        enable = true,
-      },
-      completion = {
-        callSnippet = "Replace",
-      },
-    },
-  },
-})
 vim.capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 lspconfig["html"].setup({
@@ -715,6 +762,10 @@ lspconfig["html"].setup({
 lspconfig["cssls"].setup({
   capabilities = capabilities,
 })
+
+-- ############################
+-- #         AUTOCMD          #
+-- ############################
 vim.api.nvim_create_user_command("LuaLsLoadPlugins", function(_)
   require("lspconfig").lua_ls.manager.config.settings.Lua.workspace.library = vim.api.nvim_get_runtime_file("", true)
   vim.cmd("LspRestart lua_ls")
@@ -743,3 +794,14 @@ vim.api.nvim_create_autocmd("RecordingLeave", {
     )
   end,
 })
+-- local gid = vim.api.nvim_create_augroup("remember_folds", { clear = true })
+-- vim.api.nvim_create_autocmd({ "BufWinLeave" }, {
+--   pattern = "?*",
+--   group = gid,
+--   callback = function() vim.cmd("silent! mkview 1") end,
+-- })
+-- vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
+--   pattern = "?*",
+--   group = gid,
+--   callback = function() vim.cmd("silent! loadview 1") end,
+-- })
