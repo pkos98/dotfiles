@@ -1,0 +1,65 @@
+live_config_reload = true
+
+[colors.bright]
+black = "#b4b4b4"
+blue = "#b3d2ff"
+cyan = "#c2fefa"
+green = "#e3f7a1"
+magenta = "#e5bdff"
+red = "#f99f92"
+white = "#6e6565"
+yellow = "#f2e9bf"
+
+[colors.normal]
+black = "#000000"
+blue = "#2378B5"
+cyan = "#90fdf8"
+green = "#7B8E02"
+magenta = "#ef88ff"
+red = "#f7786d"
+white = "#e5e1d8"
+yellow = "#efdfac"
+
+[colors.primary]
+background = "#141C21"
+foreground = "#93A1A1"
+
+[font]
+size = 13.0
+
+[font.bold]
+style = "Bold"
+
+[font.bold_italic]
+style = "Bold Italic"
+
+[font.italic]
+style = "Italic"
+
+[font.normal]
+family = "Iosevka"
+style = "Regular"
+
+[window]
+title = "lacritty"
+
+[keyboard]
+bindings = [ 
+  { key = "F", mods = "Control|Shift",  action = "ReceiveChar"},
+  { key = "-", mods = "Control",        action = "ReceiveChar" },
+  { key = "=", mods = "Control",        action = "ReceiveChar" },
+  { key = "_", mods = "Control|Shift",  action = "DecreaseFontSize" },
+  { key = "+", mods = "Control|Shift",  action = "IncreaseFontSize" },
+]
+
+
+[cursor]
+blink_interval = 500
+
+[cursor.style]
+shape = "Block"
+blinking = "Always"
+
+[window.dimensions]
+columns = 80
+lines = 35

@@ -1,5 +1,0 @@
-[flake8]
-ignore = D203,E501,E302,E722,E704
-ax-line-length = 120
-exclude = .git,__pycache__,docs/source/conf.py,old,build,dist
-max-complexity = 10
