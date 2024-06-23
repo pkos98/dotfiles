@@ -1,0 +1,66 @@
+Homebrew Packages:
+- neovim
+- ripgrep
+- lazygit
+- stylua
+- prettier
+- isort
+- black
+- goimports-reviser
+- go
+- terraform
+- shfmt
+- swiftformat
+- perltidy
+- rubocop
+- elixir
+- lua-language-server
+- typescript-language-server
+- clangd
+- gopls
+- rust-analyzer
+- awk
+- docker-langserver
+- bash-language-server
+- dart
+- sourcekit-lsp
+- ruby
+- python-lsp-server
+- elixir-ls
+- html-languageserver
+- css-languageserver
+
+Arch Linux Packages (including AUR):
+- neovim
+- ripgrep
+- lazygit
+- stylua
+- prettier
+- python-isort
+- python-black
+- goimports-reviser-bin (AUR)
+- go
+- terraform
+- shfmt
+- swiftformat
+- perltidy
+- rubocop
+- elixir
+- lua-language-server
+- typescript-language-server
+- clang
+- gopls
+- rust-analyzer
+- gawk
+- docker-langserver
+- bash-language-server
+- dart
+- swift-language-server-bin (AUR)
+- ruby
+- python-lsp-server
+- elixir-ls
+- vscode-html-languageserver
+- vscode-css-languageserver
+
+Unavailable:
+- aider: https://github.com/paul-gauthier/aider

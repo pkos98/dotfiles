@@ -17,6 +17,8 @@ vim.g.loaded_netrwPlugin = false
 vim.g.laststatus = 3
 vim.o.splitbelow = true
 vim.o.splitright = true
+vim.o.ignorecase = true
+vim.o.smartcase = true
 vim.o.cmdheight = 0
 vim.g.updatetime = 500 -- recommended https://github.com/airblade/vim-gitgutter#when-are-the-signs-updated
 vim.g.python3_host_prog = "python" -- improve startuptime in presence of venv (avoids lookup)
@@ -27,6 +29,7 @@ vim.loader.enable()
 -- #    PLUGIN SETTINGS   #
 -- ########################
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+---@diagnostic disable-next-line: undefined-field
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
   vim.fn.system({
     "git",
@@ -56,7 +59,7 @@ require("lazy").setup({
         },
         highlights = {
           MatchParen = {
-            bg = "grey",
+            bg = "purple",
           },
         },
       })
@@ -76,6 +79,25 @@ require("lazy").setup({
     config = function()
       ---@diagnostic disable-next-line: missing-fields
       require("nvim-treesitter.configs").setup({
+        ensure_installed = {
+          "c",
+          "go",
+          "cpp",
+          "lua",
+          "hcl",
+          "vim",
+          "bash",
+          "make",
+          "json",
+          "yaml",
+          "perl",
+          "cmake",
+          "query",
+          "vimdoc",
+          "python",
+          "elixir",
+          "markdown",
+        },
         highlight = {
           enable = true,
         },
@@ -140,11 +162,12 @@ require("lazy").setup({
   },
   {
     "nvim-telescope/telescope.nvim",
-    version = "0.1.4",
+    version = "^0.1.8",
     dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-telescope/telescope-live-grep-args.nvim", -- supports grep args in search
       "nvim-telescope/telescope-file-browser.nvim", -- for selecting files outside of cwd
+      "nvim-telescope/telescope-ui-select.nvim",
       {
         "nvim-telescope/telescope-fzf-native.nvim", -- recommended for better performance
         build = "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build",
@@ -167,7 +190,11 @@ require("lazy").setup({
           local search_text = vim.fn.getreg("v")
           vim.fn.setreg("v", {})
           search_text = string.gsub(search_text, "\n", "")
-          require("telescope").extensions.live_grep_args.live_grep_args({ default_text = search_text })
+          require("telescope").extensions.live_grep_args.live_grep_args({
+            default_text = "",
+            search_text = "",
+            only_sort_text = true,
+          })
         end,
         mode = { "n", "x", "i" },
       },
@@ -188,7 +215,7 @@ require("lazy").setup({
       },
       { "<C-b>", function() require("telescope.builtin").git_branches() end },
       {
-        "<C-c>", -- file history
+        "<C-S-H>", -- file history
         function()
           require("telescope.builtin").git_commits({
             git_command = {
@@ -202,61 +229,73 @@ require("lazy").setup({
           })
         end,
       },
-      { "<M-C-C>", function() require("telescope.builtin").git_commits() end },
+      { "<C-H>", function() require("telescope.builtin").git_commits() end }, -- branch history
+      { "<C-r>", function() require("telescope.builtin").resume() end },
     },
     config = function()
       local actions = require("telescope.actions")
       local telescope = require("telescope")
+      require("telescope-live-grep-args.actions")
       local function send(prompt_bufnr)
         actions.smart_send_to_qflist(prompt_bufnr)
         require("trouble").open("qflist")
       end
       telescope.setup({
         extensions = {
-          fzf = {
-            fuzzy = true, -- false will only do exact matching
-            override_generic_sorter = true, -- override the generic sorter
-            override_file_sorter = true, -- override the file sorter
-            case_mode = "smart_case", -- default or "ignore_case" or "respect_case"
+          ["ui-select"] = {
+            require("telescope.themes").get_cursor({}),
           },
           live_grep_args = {
             theme = "ivy",
+            mappings = {
+              i = {
+                ["<C-'>"] = require("telescope-live-grep-args.actions").quote_prompt(),
+              },
+              n = {
+                ["<C-'>"] = require("telescope-live-grep-args.actions").quote_prompt(),
+              },
+            },
           },
           file_browser = {
             theme = "ivy",
             hijack_netrw = true, -- disables netrw and use telescope-file-browser in its place
             display_stat = false,
-            -- previewer = false, TODO: customize to replace nvim-tree
-            -- layout_config = {
-            --   anchor = "NW",
-            --   height = 100,
-            --   width = 0.25,
-            -- },
           },
         },
         defaults = {
           mappings = {
             n = {
-              ["<Esc>"] = actions.close,
               ["q"] = actions.close,
               ["<C-q>"] = send,
+              ["<C-y>"] = actions.to_fuzzy_refine,
               ["<S-j>"] = function(bufnr)
                 require("telescope.state").get_status(bufnr).picker.layout_config.scroll_speed = 1
-                return require("telescope.actions").preview_scrolling_down(bufnr)
+                return actions.preview_scrolling_down(bufnr)
               end,
               ["<S-k>"] = function(bufnr)
                 require("telescope.state").get_status(bufnr).picker.layout_config.scroll_speed = 1
-                return require("telescope.actions").preview_scrolling_up(bufnr)
+                return actions.preview_scrolling_up(bufnr)
               end,
+              ["<C-s>"] = actions.file_split,
+              ["<C-v>"] = actions.file_vsplit,
+              ["<C-'>"] = function() vim.fn.feedkeys(vim.api.nvim_replace_termcodes("0i'<Esc>$a", true, false, true)) end,
             },
             i = {
               ["<C-q>"] = send,
+              ["<C-s>"] = actions.file_split,
+              ["<C-v>"] = actions.file_vsplit,
+              ["<C-'>"] = function()
+                vim.fn.feedkeys(vim.api.nvim_replace_termcodes("<Esc>0i'<Esc>$a", true, false, true))
+              end,
             },
           },
         },
         pickers = {
+          theme = "ivy",
           find_files = {
             theme = "ivy",
+            fuzzy = false,
+            case_mode = "smart_case",
           },
           buffers = {
             theme = "ivy",
@@ -281,6 +320,7 @@ require("lazy").setup({
       telescope.load_extension("fzf")
       telescope.load_extension("live_grep_args")
       telescope.load_extension("file_browser")
+      telescope.load_extension("ui-select")
     end,
   },
   {
@@ -304,53 +344,6 @@ require("lazy").setup({
     dependencies = "nvim-tree/nvim-web-devicons",
   },
   {
-    "rcarriga/nvim-dap-ui",
-    keys = {
-      { "<leader>dt", function() require("dapui").toggle() end },
-      { "<leader>dr", function() require("dapui").open({ reset = true }) end },
-    },
-    config = true,
-    dependencies = {
-      "nvim-neotest/nvim-nio",
-      { "theHamsta/nvim-dap-virtual-text", opts = { virt_text_pos = "eol" } },
-      {
-        "mfussenegger/nvim-dap",
-        keys = {
-          { "<leader>db", function() require("dap").toggle_breakpoint() end },
-          { "<leader>di", function() require("dap").step_into() end },
-          { "<leader>dd", function() require("dap").step_into() end },
-          { "<leader>do", function() require("dap").step_over() end },
-          { "<leader>du", function() require("dap").step_out() end },
-          { "<leader>dc", function() require("dap").continue() end },
-        },
-      },
-      {
-        "mfussenegger/nvim-dap-python",
-        config = function() require("dap-python").setup("python") end,
-        dependencies = "microsoft/debugpy",
-      },
-      {
-        "mxsdev/nvim-dap-vscode-js",
-        config = true,
-        dependencies = {
-          "microsoft/vscode-js-debug",
-          commit = "7349abcd0aaf72375645a4a876afab6479e0ed7e",
-          config = false,
-          build = "pnpm i && pnpm run compile vsDebugServerBundle && rm -rf out && mv -f dist out",
-        },
-      },
-    },
-  },
-  {
-    "stevearc/dressing.nvim", -- enhanced UI for e.g. refactoring
-    event = "VeryLazy",
-    opts = {
-      input = {
-        enabled = false,
-      },
-    },
-  },
-  {
     "brenoprata10/nvim-highlight-colors",
     config = true,
     ft = { "html", "css", "typescript", "javascript", "typescriptreact", "javascriptreact", "lua" },
@@ -364,7 +357,7 @@ require("lazy").setup({
     "nvim-lualine/lualine.nvim",
     event = "VeryLazy",
     dependencies = "nvim-tree/nvim-web-devicons",
-    config = function()
+    config = function(_, _)
       local theme = require("lualine.themes.onedark")
       theme.normal.a.bg = "#645394"
       theme.normal.b.fg = theme.normal.c.fg
@@ -375,7 +368,10 @@ require("lazy").setup({
           theme = theme,
         },
         sections = {
+          lualine_x = { "filetype" },
           lualine_b = {
+            "branch",
+            "diagnostics",
             {
               "macro-recording",
               fmt = function()
@@ -472,7 +468,7 @@ require("lazy").setup({
   {
     "kevinhwang91/nvim-ufo",
     dependencies = "kevinhwang91/promise-async",
-    event = "BufReadPost", -- needed
+    event = "VeryLazy", -- needed
     -- won't be loaded on shortcut, but on event
     keys = { -- TODO: fix error on first lazy invocation
       { "<C-+>", "<CMD>silent! foldopen<CR>", silent = true },
@@ -480,6 +476,8 @@ require("lazy").setup({
       { "<C-=>", "<CMD>silent! foldopen<CR>", silent = true },
       { "<C-_>", "<CMD>silent! foldclose<CR>", silent = true },
       { "<C-->", "<CMD>silent! foldclose<CR>", silent = true },
+      { "<C-S-_>", function() require("ufo").closeFoldsWith() end, silent = true },
+      { "<C-S-+>", function() require("ufo").openAllFolds() end, silent = true },
       { "<leader>up", function() require("ufo.preview"):peekFoldedLinesUnderCursor() end },
     },
     init = function()
@@ -565,9 +563,17 @@ require("lazy").setup({
         json = { "prettier" },
         yaml = { "prettier" },
         swift = { "swiftformat" },
+        perl = { "perltidy" },
+        ruby = { "rubocop" },
+        elixir = { "mix" },
+        c = { "clang-format" },
+        cpp = { "clang-format" },
+        cmake = { "gersemi" },
       },
     },
   },
+  { "Darazaki/indent-o-matic", event = "InsertEnter" },
+  { "sopa0/telescope-makefile", ft = { "make", "cmake" } },
   {
     "pmizio/typescript-tools.nvim",
     dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
@@ -615,7 +621,6 @@ require("lazy").setup({
     event = { "InsertEnter", "CmdlineEnter" },
     dependencies = {
       "neovim/nvim-lspconfig",
-      "onsails/lspkind.nvim", -- fancy icons
       "hrsh7th/cmp-nvim-lsp",
       -- "hrsh7th/cmp-buffer",
       "hrsh7th/cmp-path",
@@ -638,20 +643,12 @@ require("lazy").setup({
         },
         ---@diagnostic disable-next-line: missing-fields
         formatting = {
-          format = require("lspkind").cmp_format({
-            mode = "symbol",
-            maxwidth = 50,
-            ellipsis_char = "...",
-            symbol_map = { "" },
-            menu = {
-              nvim_lsp = "LSP",
-              buffer = "buf",
-              path = "path",
-              treesitter = "TS",
-              calc = "calc",
-            },
-          }),
+          format = function(_, vim_item)
+            vim_item.abbr = string.sub(vim_item.abbr, 1, 30)
+            return vim_item
+          end,
         },
+        ---@diagnostic disable-next-line: missing-fields
         mapping = cmp.mapping.preset.insert({
           ["<S-k>"] = cmp.mapping.scroll_docs(-4),
           ["<S-j>"] = cmp.mapping.scroll_docs(4),
@@ -662,13 +659,17 @@ require("lazy").setup({
           ["<S-Tab>"] = cmp.mapping.select_prev_item({ behavior = types.cmp.SelectBehavior.Select }),
         }),
         sources = cmp.config.sources({
-          { name = "nvim_lsp" },
-          { name = "nvim_lua" },
+          -- { name = "nvim_lsp" },
+          {
+            name = "nvim_lsp",
+            entry_filter = function(entry, _) return require("cmp").lsp.CompletionItemKind.Text ~= entry:get_kind() end,
+          },
+          -- { name = "nvim_lua" },
           { name = "path" },
           { name = "nvim_lsp_signature_help" },
           { name = "calc" },
         }, {
-          { name = "buffer" },
+          -- { name = "buffer" },
         }),
       })
       cmp.setup.filetype("gitcommit", {
@@ -696,6 +697,26 @@ require("lazy").setup({
       })
     end,
   },
+  {
+    "joshuavial/aider.nvim",
+    config = true,
+    keys = {
+      { "<leader>aa", "<CMD>lua AiderOpen()<CR>" },
+    },
+    enabled = false,
+  },
+  {
+    "frankroeder/parrot.nvim",
+    dependencies = { "ibhagwan/fzf-lua", "nvim-lua/plenary.nvim" },
+    cmd = { "PrtImplement", "PrtChat" },
+    opts = {
+      providers = {
+        anthropic = {
+          api_key = os.getenv("ANTHROPIC_API_KEY"),
+        },
+      },
+    },
+  },
 }, { dev = { path = "~/src" } })
 
 -- ############################
@@ -713,13 +734,16 @@ vim.keymap.set({ "n", "x" }, "Y", '"+y') -- yank to clipboard
 -- LSP keymaps
 vim.keymap.set("n", "<leader>ld", vim.lsp.buf.definition)
 vim.keymap.set("n", "<leader>li", vim.lsp.buf.implementation)
-vim.keymap.set("n", "<leader>ll", vim.lsp.buf.hover)
+vim.keymap.set("n", "<leader>lt", vim.lsp.buf.type_definition)
+vim.keymap.set("n", "<leader>ll", function()
+  vim.lsp.buf.hover()
+  vim.lsp.buf.hover()
+end)
 vim.keymap.set("n", "<leader>lR", vim.lsp.buf.rename)
 vim.keymap.set("n", "<leader>la", vim.lsp.buf.code_action)
-vim.keymap.set("n", "<C-h>", vim.lsp.buf.hover)
-vim.keymap.set("n", "<C-h-h>", vim.lsp.buf.signature_help)
-vim.keymap.set("n", "<A-Left>", "<C-O>", opts_silent)
-vim.keymap.set("n", "<A-Right>", "<C-I>", opts_silent)
+vim.keymap.set("n", "<leader>lci", vim.lsp.buf.incoming_calls)
+vim.keymap.set("n", "<A-Left>", "<C-O>", opts_silent) -- go back
+vim.keymap.set("n", "<A-Right>", "<C-I>", opts_silent) -- go forward
 
 -- ############################
 -- #            LSP           #
@@ -736,11 +760,11 @@ for _, lsp in pairs({
   "rust_analyzer",
   "awk_ls",
   "dockerls",
-  "bashls",
   "perlpls",
   "dartls",
-  "sourcekit",
   "lua_ls",
+  "ruby_lsp",
+  "neocmake",
 }) do
   lspconfig[lsp].setup({ capabilities = capabilities })
 end
@@ -753,14 +777,19 @@ lspconfig["pylsp"].setup({
     },
   },
 })
+
+lspconfig.bashls.setup({ filetypes = { "sh", "bash", "zsh" } })
 lspconfig.elixirls.setup({ capabilities = capabilities, cmd = { "/usr/bin/elixir-ls" } })
 vim.capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
-lspconfig["html"].setup({
+lspconfig.html.setup({
   capabilities = capabilities,
 })
-lspconfig["cssls"].setup({
+lspconfig.cssls.setup({
   capabilities = capabilities,
+})
+lspconfig.sourcekit.setup({
+  filetypes = { "swift" },
 })
 
 -- ############################
@@ -794,14 +823,3 @@ vim.api.nvim_create_autocmd("RecordingLeave", {
     )
   end,
 })
--- local gid = vim.api.nvim_create_augroup("remember_folds", { clear = true })
--- vim.api.nvim_create_autocmd({ "BufWinLeave" }, {
---   pattern = "?*",
---   group = gid,
---   callback = function() vim.cmd("silent! mkview 1") end,
--- })
--- vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
---   pattern = "?*",
---   group = gid,
---   callback = function() vim.cmd("silent! loadview 1") end,
--- })
