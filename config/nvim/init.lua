@@ -21,7 +21,7 @@ vim.o.ignorecase = true
 vim.o.smartcase = true
 vim.o.cmdheight = 0
 vim.g.updatetime = 500 -- recommended https://github.com/airblade/vim-gitgutter#when-are-the-signs-updated
-vim.g.python3_host_prog = "python" -- improve startuptime in presence of venv (avoids lookup)
+vim.g.python3_host_prog = "python" -- improve startuptime in presence of venv (avoids slow lookup heuristic)
 vim.opt.exrc = true
 vim.loader.enable()
 
@@ -260,6 +260,7 @@ require("lazy").setup({
             theme = "ivy",
             hijack_netrw = true, -- disables netrw and use telescope-file-browser in its place
             display_stat = false,
+            hidden = true,
           },
         },
         defaults = {
@@ -268,6 +269,9 @@ require("lazy").setup({
               ["q"] = actions.close,
               ["<C-q>"] = send,
               ["<C-y>"] = actions.to_fuzzy_refine,
+              ["<C-'>"] = function() vim.fn.feedkeys(vim.api.nvim_replace_termcodes("0i'<Esc>$a", true, false, true)) end,
+              ["<C-v>"] = actions.file_vsplit,
+              ["<C-s>"] = actions.file_split,
               ["<S-j>"] = function(bufnr)
                 require("telescope.state").get_status(bufnr).picker.layout_config.scroll_speed = 1
                 return actions.preview_scrolling_down(bufnr)
@@ -276,12 +280,12 @@ require("lazy").setup({
                 require("telescope.state").get_status(bufnr).picker.layout_config.scroll_speed = 1
                 return actions.preview_scrolling_up(bufnr)
               end,
-              ["<C-s>"] = actions.file_split,
-              ["<C-v>"] = actions.file_vsplit,
-              ["<C-'>"] = function() vim.fn.feedkeys(vim.api.nvim_replace_termcodes("0i'<Esc>$a", true, false, true)) end,
+              s = actions.file_split,
+              v = actions.file_vsplit,
             },
             i = {
               ["<C-q>"] = send,
+              ["<C-y>"] = actions.to_fuzzy_refine,
               ["<C-s>"] = actions.file_split,
               ["<C-v>"] = actions.file_vsplit,
               ["<C-'>"] = function()
@@ -320,7 +324,7 @@ require("lazy").setup({
       telescope.load_extension("fzf")
       telescope.load_extension("live_grep_args")
       telescope.load_extension("file_browser")
-      telescope.load_extension("ui-select")
+      telescope.load_extension("ui-select") -- TODO: load eagerly
     end,
   },
   {
@@ -394,6 +398,7 @@ require("lazy").setup({
     "lewis6991/gitsigns.nvim",
     event = "VeryLazy",
     keys = {
+      { "<leader>gb", function() require("gitsigns").blame() end },
       { "<leader>gp", function() require("gitsigns").preview_hunk() end },
       { "<leader>gs", function() require("gitsigns").stage_hunk() end },
       {
@@ -401,17 +406,25 @@ require("lazy").setup({
         function() require("gitsigns").stage_hunk({ vim.fn.line("."), vim.fn.line("v") }) end,
         mode = "x",
       },
+      { "<leader>gr", function() require("gitsigns").reset_hunk() end },
       {
         "<leader>ga",
         function()
           local actions = require("gitsigns").get_actions()
-          actions["repo_logs"] = function() vim.cmd("DiffviewFileHistory") end
-          actions["file_logs"] = function() vim.cmd("DiffviewFileHistory %") end
           vim.ui.select(vim.tbl_keys(actions), {
             prompt = "Git actions",
           }, function(selected)
             if selected ~= nil then actions[selected]() end
           end)
+        end,
+      },
+      {
+        "<leader>gd",
+        function()
+          local gs = require("gitsigns")
+          gs.toggle_linehl()
+          gs.toggle_word_diff()
+          gs.toggle_deleted()
         end,
       },
     },
@@ -427,7 +440,6 @@ require("lazy").setup({
   },
   {
     "kdheepak/lazygit.nvim",
-    dev = true,
     cmd = {
       "LazyGit",
       "LazyGitConfig",
@@ -439,29 +451,6 @@ require("lazy").setup({
     keys = {
       { "<leader>gg", function() require("lazygit").lazygit() end },
     },
-  },
-  {
-    "FabijanZulj/blame.nvim",
-    keys = {
-      { "<leader>gb", "<CMD>BlameToggle<CR>", silent = true },
-    },
-    opts = { commit_detail_view = "split" },
-  },
-  {
-    "sindrets/diffview.nvim",
-    keys = {
-      { "<A-0>", "<CMD>DiffviewOpen<CR>", silent = true },
-      { "<leader>gh", "<CMD>DiffviewFileHistory<CR>", silent = true },
-      { "<leader>ghh", "<CMD>DiffviewFileHistory %<CR>", silent = true },
-    },
-    cmd = {
-      "DiffviewFileHistory",
-      "DiffviewOpen",
-      "DiffviewClose",
-      "DiffviewFocusFiles",
-      "DiffviewRefresh",
-    },
-    config = true,
   },
 
   -- Other plugins
@@ -595,7 +584,7 @@ require("lazy").setup({
         end,
       },
       {
-        "<S-CR>",
+        "<C-S-M>",
         function()
           local api, picker = require("bookmarks.api"), require("bookmarks.adapter.picker")
           picker.pick_bookmark(
@@ -606,6 +595,7 @@ require("lazy").setup({
       },
     },
     config = function()
+      ---@diagnostic disable-next-line: missing-fields
       require("bookmarks").setup({})
       local api, cwd = require("bookmarks.api"), vim.fn.getcwd()
       -- set active list to cwd and create if not existing
@@ -622,7 +612,6 @@ require("lazy").setup({
     dependencies = {
       "neovim/nvim-lspconfig",
       "hrsh7th/cmp-nvim-lsp",
-      -- "hrsh7th/cmp-buffer",
       "hrsh7th/cmp-path",
       "hrsh7th/cmp-cmdline",
       "hrsh7th/cmp-calc",
@@ -705,18 +694,6 @@ require("lazy").setup({
     },
     enabled = false,
   },
-  {
-    "frankroeder/parrot.nvim",
-    dependencies = { "ibhagwan/fzf-lua", "nvim-lua/plenary.nvim" },
-    cmd = { "PrtImplement", "PrtChat" },
-    opts = {
-      providers = {
-        anthropic = {
-          api_key = os.getenv("ANTHROPIC_API_KEY"),
-        },
-      },
-    },
-  },
 }, { dev = { path = "~/src" } })
 
 -- ############################
@@ -793,7 +770,7 @@ lspconfig.sourcekit.setup({
 })
 
 -- ############################
--- #         AUTOCMD          #
+-- #         [AUTO]CMD        #
 -- ############################
 vim.api.nvim_create_user_command("LuaLsLoadPlugins", function(_)
   require("lspconfig").lua_ls.manager.config.settings.Lua.workspace.library = vim.api.nvim_get_runtime_file("", true)
@@ -811,6 +788,7 @@ vim.api.nvim_create_autocmd("RecordingEnter", {
 })
 vim.api.nvim_create_autocmd("RecordingLeave", {
   callback = function()
+    ---@diagnostic disable-next-line: undefined-field
     local timer = vim.loop.new_timer()
     timer:start(
       50,
