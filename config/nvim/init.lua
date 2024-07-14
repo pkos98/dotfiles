@@ -167,7 +167,6 @@ require("lazy").setup({
       "nvim-lua/plenary.nvim",
       "nvim-telescope/telescope-live-grep-args.nvim", -- supports grep args in search
       "nvim-telescope/telescope-file-browser.nvim", -- for selecting files outside of cwd
-      "nvim-telescope/telescope-ui-select.nvim",
       {
         "nvim-telescope/telescope-fzf-native.nvim", -- recommended for better performance
         build = "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build",
@@ -242,9 +241,6 @@ require("lazy").setup({
       end
       telescope.setup({
         extensions = {
-          ["ui-select"] = {
-            require("telescope.themes").get_cursor({}),
-          },
           live_grep_args = {
             theme = "ivy",
             mappings = {
@@ -324,7 +320,6 @@ require("lazy").setup({
       telescope.load_extension("fzf")
       telescope.load_extension("live_grep_args")
       telescope.load_extension("file_browser")
-      telescope.load_extension("ui-select") -- TODO: load eagerly
     end,
   },
   {
@@ -450,6 +445,14 @@ require("lazy").setup({
     dependencies = "nvim-lua/plenary.nvim",
     keys = {
       { "<leader>gg", function() require("lazygit").lazygit() end },
+    },
+  },
+  {
+    "Chaitanyabsprip/fastaction.nvim",
+    config = true,
+    keys = {
+      { "<leader>la", function() require("fastaction").code_action() end },
+      { "<leader>la", function() require("fastaction").range_code_action() end, mode = "x" },
     },
   },
 
@@ -717,7 +720,7 @@ vim.keymap.set("n", "<leader>ll", function()
   vim.lsp.buf.hover()
 end)
 vim.keymap.set("n", "<leader>lR", vim.lsp.buf.rename)
-vim.keymap.set("n", "<leader>la", vim.lsp.buf.code_action)
+-- vim.keymap.set("n", "<leader>la", vim.lsp.buf.code_action) -- defined at fastaction.nvim
 vim.keymap.set("n", "<leader>lci", vim.lsp.buf.incoming_calls)
 vim.keymap.set("n", "<A-Left>", "<C-O>", opts_silent) -- go back
 vim.keymap.set("n", "<A-Right>", "<C-I>", opts_silent) -- go forward
