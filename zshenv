@@ -26,8 +26,12 @@ alias nvimdiff="nvim -d"
 alias vimdiff="nvim -d"
 alias pip="uv pip"
 alias pipx="pipxu"
-alias z="zoxide"
+alias zz="z -"
 source ~/.zshenv.secret
+
+function ~() {
+  z
+}
 
 function always() {
 	while true; do $@; done
