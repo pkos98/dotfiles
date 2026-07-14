@@ -1,0 +1,5 @@
+font-family = "IosevkaTerm Nerd Font Mono"
+font-size = 15
+macos-option-as-alt = true
+unfocused-split-opacity = 0.6
+custom-shader = shaders/cursor_warp.glsl
