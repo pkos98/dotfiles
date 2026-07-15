@@ -15,7 +15,7 @@ return {
     },
     config = function(_, opts)
       require("tokyodark").setup(opts)
-      vim.cmd("colorscheme ex-tokyodark")
+      vim.cmd("colorscheme tokyodark")
     end,
   },
   {
@@ -628,7 +628,6 @@ return {
   },
   {
     "carlos-algms/agentic.nvim",
-    event = "VeryLazy",
     dependencies = {
       "nvim-lua/plenary.nvim",
       "folke/snacks.nvim",

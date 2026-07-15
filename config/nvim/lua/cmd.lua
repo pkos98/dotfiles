@@ -4,7 +4,11 @@
 
 -- Enable treesitter highlight for all filetypes
 vim.api.nvim_create_autocmd("FileType", {
-  callback = function() pcall(vim.treesitter.start) end,
+  callback = function()
+    vim.schedule(function()
+      pcall(vim.treesitter.start)
+    end)
+  end,
 })
 
 -- Set conceallevel for helm files
