@@ -744,7 +744,7 @@ return {
     end,
     keys = {
       {
-        "<leader>aa",
+        "<M-a>",
         function()
           local registry = require("agentic.session_registry")
           local session = registry.get_session_for_tab_page()
@@ -767,7 +767,7 @@ return {
         mode = { "n", "v", "i" },
       },
       {
-        "<leader>as",
+        "<M-s>",
         function()
           local registry = require("agentic.session_registry")
           local session = registry.get_session_for_tab_page()
@@ -788,7 +788,7 @@ return {
         mode = { "n", "v", "i" },
       },
       {
-        "<leader>AA",
+        "<M-A>",
         function()
           local registry = require("agentic.session_registry")
           local session = registry.get_session_for_tab_page()
@@ -810,7 +810,7 @@ return {
         mode = { "n", "v", "i" },
       },
       {
-        "<leader>ac",
+        "<M-c>",
         function() require("agentic").add_selection_or_file_to_context({ focus_prompt = false }) end,
         desc = "Add current file/selection to Agentic context",
         mode = { "n", "v" },

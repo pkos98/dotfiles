@@ -51,7 +51,7 @@ plugin-load $plugins
 source ~/.config/zsh/fzf-keybindings.sh
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
-setopt INTERACTIVE_COMMENTS
+setopt INTERACTIVE_COMMENTS EXTENDED_GLOB KSH_GLOB
 autoload -Uz compinit && compinit
 
 alias ..="cd .."
