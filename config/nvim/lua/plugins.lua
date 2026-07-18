@@ -650,7 +650,7 @@ return {
       keymaps = {
         prompt = {
           submit = {
-            "<CR>",
+            { "<CR>", mode = { "i", "n" } },
             { "<C-s>", mode = { "i", "n", "v" } },
             { "<C-CR>", mode = { "i", "n", "v" } },
           },

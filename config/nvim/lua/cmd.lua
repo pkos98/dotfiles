@@ -246,3 +246,12 @@ vim.keymap.set(
   function() explain_k8s_field(true) end,
   { desc = "Kubernetes Explain --recursive under cursor" }
 )
+
+-- Shift+Enter inserts a newline in the Agentic prompt instead of submitting
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "AgenticInput",
+  callback = function(event)
+    vim.keymap.set("i", "<S-CR>", "<LF>", { buffer = event.buf, silent = true })
+  end,
+})
+
